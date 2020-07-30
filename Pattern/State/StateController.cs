@@ -67,5 +67,24 @@ namespace Ashe.Pattern
             }
             currentState = newState;
         }
+
+        /// <summary>
+        /// 指定した名前のStateが現在のStateかどうか
+        /// </summary>
+        /// <param name="name">State名</param>
+        /// <returns>nameで指定したStateが現在のStateかどうか</returns>
+        public bool IsCurrentState(string name)
+        {
+            return currentState.name == name;
+        }
+
+        /// <summary>
+        /// 現在実行中のState名を取得する
+        /// </summary>
+        /// <returns>現在実行中のState名</returns>
+        public string GetCurrentStateName()
+        {
+            return currentState.name;
+        }
     }
 }
