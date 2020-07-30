@@ -11,7 +11,7 @@ namespace Ashe
     /// <summary>
     public class ObjectBase : MonoBehaviour
     {
-        protected Transform cachedTransform;
+        public Transform cachedTransform;
         /// <summary>
         /// OnRegisteredが呼ばれたかどうか
         /// </summary>
