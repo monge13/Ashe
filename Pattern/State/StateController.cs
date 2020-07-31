@@ -64,9 +64,9 @@ namespace Ashe.Pattern
         /// Stateの変更 
         /// </summary>
         /// <param name="newState">新しいState</param>
-        public void ChangeState(string name)
+        public State<T> ChangeState(string name)
         {
-            ChangeState((uint)name.GetHashCode());
+            return ChangeState((uint)name.GetHashCode());
         }
 
 
@@ -74,13 +74,14 @@ namespace Ashe.Pattern
         /// Stateの変更 
         /// </summary>
         /// <param name="hash">新しいState名のGetHashCode</param>
-        public void ChangeState(uint hash)
+        public State<T> ChangeState(uint hash)
         {
             State<T> newState;
             if (states.TryGetValue((uint)hash, out newState))
             {
                 nextState = newState;
             }
+            return newState;
         }
 
         /// <summary>
