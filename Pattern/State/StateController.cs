@@ -4,6 +4,11 @@ namespace Ashe.Pattern
 {
     /// <summary>
     /// Stateの実行、保持、切り替えを行う 
+    /// 1:ChangeStateした場合は次の更新時にStateの変更が行われる
+    /// 新しいStateのUpdateは2フレーム後から
+    /// 2:Stateの固有のパラメーターを設定したい場合は下記のように行う
+    /// TestState test = stateController.ChangeState("Test");
+    /// test.hoge = 2;
     /// </summary> 
     public class StateController<T> where T : class
     {
@@ -16,6 +21,12 @@ namespace Ashe.Pattern
         /// 現在実行中のState 
         /// </summary>
         State<T> currentState;
+
+        /// <summary>
+        /// 次に実行するState
+        /// </summary>
+        State<T> nextState = null;
+
 
         /// <summary>
         /// Stateの登録 
@@ -33,6 +44,16 @@ namespace Ashe.Pattern
         /// <param name="deltaTime"></param>
         public void Update(float deltaTime)
         {
+            if(nextState != null)
+            {
+                if (currentState != null) currentState.Exit();
+                nextState.Enter();
+                currentState = nextState;
+                nextState = null;
+                return;
+            }
+
+
             if (currentState != null)
             {
                 currentState.Execute(deltaTime);
@@ -55,17 +76,11 @@ namespace Ashe.Pattern
         /// <param name="hash">新しいState名のGetHashCode</param>
         public void ChangeState(uint hash)
         {
-            if(currentState != null)
-            {
-                currentState.Exit();
-            }
-
             State<T> newState;
-            if(states.TryGetValue((uint)hash, out newState))
+            if (states.TryGetValue((uint)hash, out newState))
             {
-                newState.Enter();
+                nextState = newState;
             }
-            currentState = newState;
         }
 
         /// <summary>
