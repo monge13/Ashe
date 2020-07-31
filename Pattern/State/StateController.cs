@@ -79,12 +79,12 @@ namespace Ashe.Pattern
         }
 
         /// <summary>
-        /// 現在実行中のState名を取得する
+        /// 現在実行中のStateを返す
         /// </summary>
-        /// <returns>現在実行中のState名</returns>
-        public string GetCurrentStateName()
+        /// <returns>現在実行中のState</returns>
+        public State<T> GetCurrentState()
         {
-            return currentState.name;
+            return currentState;
         }
     }
 }
