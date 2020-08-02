@@ -10,6 +10,16 @@ namespace Ashe
     public class KeyboardInput
     {
         /// <summary>
+        /// マウス入力の際の座標を保持する
+        /// </summary>
+        public struct MouseInfo
+        {
+            public Vector2 position;
+            public Vector2 deltaPosition;
+        }
+        MouseInfo mouseInfo;
+
+        /// <summary>
         /// キー入力のイベント 
         /// </summary>
         public class Event
@@ -21,7 +31,7 @@ namespace Ashe
             /// <param name="_onDown">キーが押された時に呼ばれるイベント</param>
             /// <param name="_onKey">キーが押されている間呼ばれるイベント</param>
             /// <param name="_onUp">キーが離された時に呼ばれるイベント</param>
-            public Event(KeyCode _keyCode, Action _onDown = null, Action _onKey = null, Action _onUp = null)
+            public Event(KeyCode _keyCode, Action<MouseInfo> _onDown = null, Action<MouseInfo> _onKey = null, Action<MouseInfo> _onUp = null)
             {
                 keycode = _keyCode;
                 onDown = _onDown;
@@ -37,9 +47,9 @@ namespace Ashe
             /// <summary>
             /// キー入力されたら実行されるコマンド 
             /// </summary>
-            public Action onDown;
-            public Action onKey;
-            public Action onUp;
+            public Action<MouseInfo> onDown;
+            public Action<MouseInfo> onKey;
+            public Action<MouseInfo> onUp;
         }
 
         /// <summary>
@@ -56,8 +66,13 @@ namespace Ashe
         {
             if(!Input.anyKey)
             {
+                mouseInfo.deltaPosition = Const.Vector2.zero;
                 return;
             }
+
+            Vector2 newMousePosition = Input.mousePosition;
+            mouseInfo.deltaPosition = newMousePosition - mouseInfo.position;
+            mouseInfo.position = newMousePosition;
 
             int count = eventList.Count;
             for (int i = 0; i < count; ++i)
@@ -67,21 +82,21 @@ namespace Ashe
                 {
                     if (_event.onDown != null)
                     {
-                        _event.onDown();
+                        _event.onDown(mouseInfo);
                     }
                 }
                 if (Input.GetKey(_event.keycode))
                 {
                     if (_event.onKey != null)
                     {
-                        _event.onKey();
+                        _event.onKey(mouseInfo);
                     }
                 }
                 if (Input.GetKeyUp(_event.keycode))
                 {
                     if (_event.onUp != null)
                     {
-                        _event.onUp();
+                        _event.onUp(mouseInfo);
                     }
                 }
             }

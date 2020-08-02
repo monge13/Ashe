@@ -20,7 +20,6 @@ namespace Ashe
             }
         }
 
-
         /// <summary>
         /// オーダーをシステムに変更する 
         /// </summary>

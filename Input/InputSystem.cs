@@ -49,6 +49,7 @@ namespace Ashe
         /// <returns></returns>
         protected override bool Initialize(uint callCount)
         {
+            _order = ObjectOrder.ORDER_SYSTEM;
             if (useKeyboard)
             {
                 keyboard = new KeyboardInput();
