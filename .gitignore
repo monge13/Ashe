@@ -58,3 +58,8 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+Test/Test.cs
+Test/Test.cs.meta
+Test/Test.unity
+Test/Test.unity.meta
+Test.meta
