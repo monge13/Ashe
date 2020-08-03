@@ -137,5 +137,21 @@ namespace Ashe
         protected virtual void OnLateExecute(float deltaTime)
         {
         }
+
+        /// <summary>
+        /// ゲームオブジェクトを破棄する 
+        /// </summary>
+        public void Destroy()
+        {
+            if (!destroyed) OnObjectDestroy();
+            destroyed = true;
+        }
+
+        /// <summary>
+        /// ゲームオブジェクトが破棄された際のイベント 
+        /// </summary>
+        protected virtual void OnObjectDestroy()
+        {
+        }
     }
 }
