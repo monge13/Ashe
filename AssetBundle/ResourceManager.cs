@@ -16,7 +16,7 @@ namespace Ashe
         // パス生成用 
         StringBuilder stringBuilder = new StringBuilder(128);
         // シングルマニフェスト 
-        AssetBundleManifest singleManifest;
+        AssetBundleManifest singleManifest = default;
 
         // システムクラスなのでオーダーはシステム 
         public override int order

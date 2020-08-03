@@ -8,14 +8,14 @@ namespace Ashe
     {
         // 注視点となるTransform 
         [SerializeField]
-        Transform _target;
+        Transform _target = default;
         // _targetから_lookAtOffsetを足した分が注視点となる
         [SerializeField]
-        Vector3 _lookAtOffset;
+        Vector3 _lookAtOffset = default;
 
         // ターゲットからの距離 
         [SerializeField]
-        float _distance;
+        float _distance = 5.0f;
 
         // 回転を合成する順番 
         public enum RotationOrder
