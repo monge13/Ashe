@@ -17,17 +17,17 @@ namespace Ashe
         /// Keyboard入力を使うかどうか 
         /// </summary>
         [SerializeField]
-        bool useKeyboard;
+        bool useKeyboard = default;
         /// <summary>
         /// ジョイスティック入力を使うかどうか 
         /// </summary>
         [SerializeField]
-        bool useJoyStick;
+        bool useJoyStick = default;
         /// <summary>
         /// タッチ入力を使うかどうか 
         /// </summary>
         [SerializeField]
-        bool useTouchInput;
+        bool useTouchInput = default;
 
         /// <summary>
         /// キーボードからの入力を検知して入力情報をキャッシュする 
