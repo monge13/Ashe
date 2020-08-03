@@ -64,12 +64,6 @@ namespace Ashe
 
         public void Update(float deltaTime)
         {
-            if(!Input.anyKey)
-            {
-                mouseInfo.deltaPosition = Const.Vector2.zero;
-                return;
-            }
-
             Vector2 newMousePosition = Input.mousePosition;
             mouseInfo.deltaPosition = newMousePosition - mouseInfo.position;
             mouseInfo.position = newMousePosition;
@@ -85,14 +79,14 @@ namespace Ashe
                         _event.onDown(mouseInfo);
                     }
                 }
-                if (Input.GetKey(_event.keycode))
+                else if (Input.GetKey(_event.keycode))
                 {
                     if (_event.onKey != null)
                     {
                         _event.onKey(mouseInfo);
                     }
                 }
-                if (Input.GetKeyUp(_event.keycode))
+                else if (Input.GetKeyUp(_event.keycode))
                 {
                     if (_event.onUp != null)
                     {
