@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace Ashe
 {
+    /// <summary>
+    /// GameObjectを独自に定義し更新順番やグルーピングによる一括操作を提供する
+    /// </summary>
     public class GameObjectManager : MonoBehaviour
     {
         private static GameObjectManager instance;
@@ -53,17 +56,22 @@ namespace Ashe
             {
                 get { return _setting; }
             }
+            static readonly int DEFAULT_CAPACITY_FOR_GAMEOBJECTS = 100;
+            private List<ObjectBase> objects = new List<ObjectBase>(DEFAULT_CAPACITY_FOR_GAMEOBJECTS);
 
-            private List<ObjectBase> objects = new List<ObjectBase>(100);
-
-            // ObjectBaseを登録する
+            /// <summary>
+            /// ObjectBaseを登録する
+            /// </summary>
+            /// <param name="obj">登録したObject</param>
             public void Add(ObjectBase obj)
             {
                 obj.OnRegistered();
                 objects.Add(obj);
             }
 
-            // 削除予定のオブジェクトを削除する 
+            /// <summary>
+            /// 削除予定のオブジェクトを削除する 
+            /// </summary>
             public void Remove()
             {
                 for (int i = 0; i < objects.Count;)
@@ -78,7 +86,10 @@ namespace Ashe
                 }
             }
 
-            // オブジェクトの更新(Update)
+            /// <summary>
+            /// オブジェクトの更新(Update)
+            /// </summary>
+            /// <param name="deltaTime"></param>
             public void Execute(float deltaTime)
             {
                 if (!_setting.enableExecute)
@@ -98,7 +109,10 @@ namespace Ashe
                 }
             }
 
-            // オブジェクトの更新(LateUpdate)
+            /// <summary>
+            /// オブジェクトの更新(LateUpdate)
+            /// </summary>
+            /// <param name="deltaTime"></param>
             public void LateExecute(float deltaTime)
             {
                 if (!_setting.enableLateExecute)
