@@ -41,6 +41,12 @@ namespace Ashe
 
         /// <summary>
         /// 更新の優先順位　
+        /// Orderをスクリプトから変更する際は継承先で下記のようにしてください
+        /// void Start()
+        /// {
+        ///     _order = ObjectOrder.NEW;
+        ///     base.Start();
+        /// }
         /// </summary>
         [SerializeField]
         protected int _order = ObjectOrder.ORDER_DEFAULT;
@@ -60,7 +66,7 @@ namespace Ashe
         /// <summary>
         /// Startでは
         /// </summary>
-        void Start()
+        protected void Start()
         {
             // 初期化されていなければシーンに置かれていたものなのでGameObjectManagerに登録する 
             if (!Registered)
