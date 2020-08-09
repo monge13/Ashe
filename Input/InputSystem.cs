@@ -96,7 +96,7 @@ namespace Ashe
             }
             if (useTouchInput)
             {
-                //touch.Update(deltaTime);
+                touch.Update(deltaTime);
             }
         }
 
