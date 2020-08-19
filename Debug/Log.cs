@@ -1,11 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Ashe
 {
-    namespace Debug
+    public class Debug
     {
+        [Conditional("_LOG_ENABLED")]
+        public static void Assert(bool flag, string message = "assertion failed")
+        {
+            if (!flag)
+            {
+#if UNITY_EDITOR
+                EditorUtility.DisplayDialog("Assert", message, "OK");
+#endif
+                Log.E(message);
+            }
+        }
+
         public class Log
         {
             [Conditional("_LOG_ENABLED")]
@@ -35,9 +50,9 @@ namespace Ashe
                     WARNING,
                     ERROR,
                 }
-                public DateTime time;
-                public TYPE type;
-                public string message;
+                public DateTime time = default;
+                public TYPE type = TYPE.INFO;
+                public string message = default;
             }
             List<LogInfo> logInfos = new List<LogInfo>();
 #endif
