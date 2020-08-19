@@ -84,7 +84,7 @@ namespace Ashe.Pattern
         /// <param name="count">実行するコマンド数 EXECUTE_ALL_COMMANDSが指定されたらすべて</param>
         public void Execute(float deltaTime, int count = EXECUTE_ALL_COMMANDS)
         {
-            if (count == EXECUTE_ALL_COMMANDS)
+            if (count == EXECUTE_ALL_COMMANDS || count >= commandQueue.Count)
             {
                 count = commandQueue.Count;
             }
