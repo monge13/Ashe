@@ -10,7 +10,6 @@
         /// </summary>
         protected T owner;
 
-#if UNITY_EDITOR
         /// <summary>
         /// State名 
         /// </summary>
@@ -18,7 +17,7 @@
         {
             get; private set;
         }
-#endif
+
         /// <summary>
         /// Steta名のGetHashCode 
         /// </summary>
