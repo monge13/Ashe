@@ -7,18 +7,8 @@ namespace Ashe
     /// <summary>
     /// GameObjectを独自に定義し更新順番やグルーピングによる一括操作を提供する
     /// </summary>
-    public class GameObjectManager : MonoBehaviour
+    public class GameObjectManager : Pattern.SingletonMonoBehaviour<GameObjectManager>
     {
-        private static GameObjectManager instance;
-        public static GameObjectManager I
-        {
-            get
-            {
-                Debug.Assert(instance != null, "GameObjectManager is Null!!!!!");
-                return instance;
-            }
-        }
-
         // オーダーごとのGameObjectを保持して更新や破棄を行う 
         public class GameBaseOrderControl
         {
@@ -201,20 +191,19 @@ namespace Ashe
         }
 
         /// <summary>
-        /// 消されないようにしインスタンスを取得する 
+        /// オブジェクトの格納スペースを確保する 
         /// </summary>
-        void Awake()
+        protected override void Init()
         {
+            base.Init();
             if (Application.isPlaying)
             {
                 DontDestroyOnLoad(gameObject);
             }
-            instance = this;
             for (int i = 0; i < MAX_OBJECTBASE_ORDER_NUM; ++i)
             {
                 objectBaseList[i] = new GameBaseOrderControl();
             }
-
             initialized = true;
         }
 
