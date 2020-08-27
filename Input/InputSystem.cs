@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 namespace Ashe
 {
@@ -88,7 +88,7 @@ namespace Ashe
 #endif
             if (useKeyboard)
             {
-                keyboard.Update(deltaTime);
+                keyboard.Update(deltaTime, EventSystem.current);
             }
             if (useJoyStick)
             {
@@ -96,7 +96,7 @@ namespace Ashe
             }
             if (useTouchInput)
             {
-                touch.Update(deltaTime);
+                touch.Update(deltaTime, EventSystem.current);
             }
         }
 
@@ -109,7 +109,7 @@ namespace Ashe
         {
             if (joystick != null)
             {
-               joystick.eventList.Add(_event);
+               joystick.AddEvent(_event);
             }
         }
 
@@ -121,7 +121,7 @@ namespace Ashe
         {
             if (joystick != null)
             {
-                joystick.eventList.Remove(_event);
+                joystick.RemoveEvent(_event);
             }
         }
 
@@ -133,7 +133,7 @@ namespace Ashe
         {
             if (keyboard != null)
             {
-                keyboard.eventList.Add(_event);
+                keyboard.AddEvent(_event);
             }
         }
 
@@ -145,7 +145,31 @@ namespace Ashe
         {
             if (keyboard != null)
             {
-                keyboard.eventList.Remove(_event);
+                keyboard.RemoveEvent(_event);
+            }
+        }
+
+        /// <summary>
+        /// タッチへの入力イベントの追加
+        /// </summary>
+        /// <param name="_event"></param>
+        public void AddEvent(TouchInput.Event _event)
+        {
+            if(touch != null)
+            {
+                touch.AddEvent(_event);
+            }
+        }
+
+        /// <summary>
+        /// タッチへの入力イベントの削除 
+        /// </summary>
+        /// <param name="_event"></param>
+        public void RemoveEvent(TouchInput.Event _event)
+        {
+            if(touch != null)
+            {
+                touch.RemoveEvent(_event);
             }
         }
     }
