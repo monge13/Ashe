@@ -64,7 +64,15 @@ namespace Ashe
         private uint initializeCallCount;
 
         /// <summary>
-        /// Startでは
+        /// Transformのキャッシュ 
+        /// </summary>
+        protected void Awake()
+        {
+            cachedTransform = transform;
+        }
+
+        /// <summary>
+        /// Startではもし登録されてないオブジェクトであれば登録する 
         /// </summary>
         protected void Start()
         {
@@ -80,7 +88,6 @@ namespace Ashe
         /// </summary>
         public void OnRegistered()
         {
-            cachedTransform = transform;
             Registered = true;
         }
 
