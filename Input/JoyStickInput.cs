@@ -113,10 +113,10 @@ namespace Ashe
             */
 
             // ボタンの処理 
-            int count = eventList.Count;
+            int count = _eventList.Count;
             for(int i = 0; i < count; ++i)
             {
-                var _event = eventList[i];
+                var _event = _eventList[i];
                 if(Input.GetButtonDown(ButtonNames[(int)_event.joystickButton]))
                 {
                     if (_event.onDown != null)
@@ -227,9 +227,13 @@ namespace Ashe
         /// ボタン入力をとるコマンド 
         /// </summary>
         List<Event> _eventList = new List<Event>();
-        public List<Event> eventList
+        public void AddEvent(Event _event)
         {
-            get { return _eventList; }
+            _eventList.Add(_event);
+        }
+        public void RemoveEvent(Event _event)
+        {
+            _eventList.Remove(_event);
         }
     }
 }
