@@ -8,7 +8,7 @@ namespace Ashe
     namespace Animation
     {
         /// <summary>
-        /// CharacterControllerなどでコンポジットして使用
+        /// Characterなどでコンポジットして使用
         /// </summary>
         public class PlayableAnimation
         {
@@ -20,6 +20,7 @@ namespace Ashe
             /// <summary>
             /// Animationの設定データ 
             /// </summary>
+            [System.Serializable]
             public class AnimationData
             {
                 AnimationData(string _name, AnimationClip _clip)
