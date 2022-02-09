@@ -8,7 +8,7 @@ namespace Ashe
         public class BinarySerializer
         {
 
-            public static void Seialize<T>(string path, T obj)
+            public static void Serialize<T>(string path, T obj)
             {
                 using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write))
                 {
