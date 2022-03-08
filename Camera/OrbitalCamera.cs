@@ -49,11 +49,10 @@ namespace Ashe
         }
 
         // カメラの更新 
-        protected override void OnLateExecute(float deltaTime)
+        void LateUpdate()
         {
             UpdateLookAtAndPostion();
             UpdateTransform();
-            base.OnLateExecute(deltaTime);
         }
 
         // 注視点と座標を更新する 

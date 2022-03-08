@@ -6,7 +6,7 @@ namespace Ashe
     /// <summary>
     /// 入力の管理システム 
     /// </summary>
-    public class InputSystem : SystemObject<InputSystem>
+    public class InputSystem : Pattern.SingletonMonoBehaviour<InputSystem>
     {
         /// <summary>
         /// コマンドを登録するリストのデフォルトのCapacity 
@@ -45,11 +45,8 @@ namespace Ashe
         /// <summary>
         /// 有効な入力デバイスに対応したクラスを作成する 
         /// </summary>
-        /// <param name="callCount"></param>
-        /// <returns></returns>
-        protected override bool Initialize(uint callCount)
+        void Start()
         {
-            _order = ObjectOrder.ORDER_SYSTEM;
             if (useKeyboard)
             {
                 keyboard = new KeyboardInput();
@@ -62,15 +59,12 @@ namespace Ashe
             {
                 touch = new TouchInput();
             }
-
-            return base.Initialize(callCount);
         }
 
         /// <summary>
         /// 入力処理の更新 
         /// </summary>
-        /// <param name="deltaTime"></param>
-        protected override void OnExecute(float deltaTime)
+        void Update()
         {
 #if UNITY_EDITOR
             if (keyboard == null)
@@ -86,6 +80,7 @@ namespace Ashe
                 touch = new TouchInput();
             }
 #endif
+            float deltaTime = Time.deltaTime;
             if (useKeyboard)
             {
                 keyboard.Update(deltaTime, EventSystem.current);

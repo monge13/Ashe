@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Ashe
 {
-    public class ResourceManager : ObjectBase
+    public class ResourceManager : Pattern.SingletonMonoBehaviour<ResourceManager>
     {
         // アセットバンドルを保持するディクショナリのデフォルトのキャパシティ 
         const int DEFAULT_RESOURCES_CAPACITY = 200;
@@ -17,15 +17,6 @@ namespace Ashe
         StringBuilder stringBuilder = new StringBuilder(128);
         // シングルマニフェスト 
         AssetBundleManifest singleManifest = default;
-
-        // システムクラスなのでオーダーはシステム 
-        public override int order
-        {
-            get
-            {
-                return ObjectOrder.ORDER_SYSTEM;
-            }
-        }
 
         // 依存関係のためにアセットバンドルを保持し続ける必要がある場合はkeepAssetBundleをtrueにする 
         public void Load(string assetBundleName, System.Action<ResourceHolder> onComplete, bool keepAssetbundle = false)

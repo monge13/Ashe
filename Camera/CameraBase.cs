@@ -4,11 +4,11 @@ namespace Ashe
 {
     // カメラの基底クラス
     [RequireComponent(typeof(Camera))]
-    public class CameraBase : ObjectBase
+    public class CameraBase : MonoBehaviour
     {
-
         // カメラコンポーネント 
         protected Camera cachedCamera;
+        protected Transform _cachedTransform;
 
         // カメラ座標
         Vector3 _position;
@@ -42,10 +42,10 @@ namespace Ashe
         }
 
 
-        protected override bool Initialize(uint callCount)
+        void Start()
         {
+            _cachedTransform = transform;
             cachedCamera = GetComponent<Camera>();
-            return base.Initialize(callCount);
         }
 
         // 角度と座標の更新を行う 
@@ -53,12 +53,12 @@ namespace Ashe
         {
             if (isDirtyPosition)
             {
-                cachedTransform.position = _position;
+                _cachedTransform.position = _position;
                 isDirtyPosition = false;
             }
             if (isDirtyLocalRotation)
             {
-                cachedTransform.localRotation = _localRoation;
+                _cachedTransform.localRotation = _localRoation;
                 isDirtyLocalRotation = false;
             }
         }

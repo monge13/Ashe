@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Ashe
 {
-    public class AssetBundleloader : ObjectBase
+    public class AssetBundleloader : MonoBehaviour
     {
         // 最大同時にロードする数
         int _maxLoadNum = 5;
@@ -147,14 +147,13 @@ namespace Ashe
         Queue<LoadAssetBundleRequest> requestQueue = new Queue<LoadAssetBundleRequest>(DEFUALT_REQUEST_QUEUE_CAPACITY);
 
 
-        protected override bool Initialize(uint callCount)
+        void Start()
         {
             waitForInterval = new WaitForSeconds(_retryInterval);
             for (int i = 0; i < maxLoadNum; ++i)
             {
                 StartCoroutine(Load());
             }
-            return base.Initialize(callCount);
         }
 
         public void Load(string path, bool isCached)
