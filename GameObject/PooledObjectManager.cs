@@ -20,9 +20,10 @@ namespace Ashe
         /// <param name="prefab">プールしたいオブジェクトのPrefab</param>
         /// <param name="num">プールする数</param>
         /// <param name="active">初期値をアクティブにしておくか</param>
-        public void Pool(string name, T prefab, int num, bool active = false)
+        /// <param name="parent">親になるTransform</param>
+        public void Pool(string name, T prefab, int num, bool active = false, Transform parent = null)
         {
-            Pool((uint)name.GetHashCode(), prefab, num, active);
+            Pool((uint)name.GetHashCode(), prefab, num, active, parent);
         }
 
         /// <summary>
@@ -33,7 +34,8 @@ namespace Ashe
         /// <param name="prefab">プールしたいオブジェクトのPrefab</param>
         /// <param name="num">プールする数</param>
         /// <param name="active">初期値をアクティブにしておくか</param>
-        public void Pool(uint key, T prefab, int num, bool active = false)
+        /// <param name="parent">親になるTransform</param>
+        public void Pool(uint key, T prefab, int num, bool active = false, Transform parent = null)
         {
             Queue<T> q;
             if (!dictionary.TryGetValue(key, out q))
@@ -43,7 +45,7 @@ namespace Ashe
             }
             for(int i = 0; i < num; ++i)
             {
-                T t = Object.Instantiate<T>(prefab);
+                T t = Object.Instantiate<T>(prefab, parent);
                 t.gameObject.SetActive(active);
                 q.Enqueue(t);
             }
