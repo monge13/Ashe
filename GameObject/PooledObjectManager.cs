@@ -22,7 +22,7 @@ namespace Ashe
         /// <param name="active">初期値をアクティブにしておくか</param>
         public void Pool(string name, T prefab, int num, bool active = false)
         {
-            Pool((uint)name.GetHashCode(), prefab, num);
+            Pool((uint)name.GetHashCode(), prefab, num, active);
         }
 
         /// <summary>
