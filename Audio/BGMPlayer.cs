@@ -1,5 +1,6 @@
 
 using UnityEngine;
+using DG.Tweening;
 
 public class BGMPlayer : MonoBehaviour
 {   
@@ -32,11 +33,18 @@ public class BGMPlayer : MonoBehaviour
     /// <param name="fadeDuration"></param>
     public void play(AudioClip clip, float fadeDuration)
     {
+        int currentPlayingGroup = (int)playingGroup;
         int newPlayGroup = ((int)playingGroup+1) % 2;
         Ashe.Debug.Log.I(newPlayGroup.ToString());
         source[newPlayGroup].clip = clip;
         if(fadeDuration > 0f) {
-            // TODO: フェードを作る
+            var sequence = DOTween.Sequence();
+            source[newPlayGroup].volume = 0f;
+            sequence.Append(source[newPlayGroup].DOFade(1f, fadeDuration));
+            if(playingGroup != GROUP.NOT_PLAYING) {                
+                sequence.Join(source[currentPlayingGroup].DOFade(0f, fadeDuration));
+            }
+            sequence.Play().OnComplete(()=> source[currentPlayingGroup].Stop());
         }
         source[newPlayGroup].Play();
         playingGroup = (GROUP)newPlayGroup;
