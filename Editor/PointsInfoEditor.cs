@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
@@ -8,12 +6,12 @@ namespace Ashe
 {
     namespace Editor
     {
-        [CustomEditor(typeof(Ashe.Animation.PointFollower))]
-        public class PointFollowerEditor : UnityEditor.Editor
+        [CustomEditor(typeof(Ashe.Animation.PointsInfo))]
+        public class PointsInfoEditor : UnityEditor.Editor
         {
-            Ashe.Animation.PointFollower GetTarget()
+            Ashe.Animation.PointsInfo GetTarget()
             {
-                return target as Ashe.Animation.PointFollower;
+                return target as Ashe.Animation.PointsInfo;
             }
 
             public override void OnInspectorGUI()
@@ -21,30 +19,34 @@ namespace Ashe
                 base.OnInspectorGUI();
             }
 
-            // ポイントのGUI
-            void BuildPointWidget(int inex)
+            void OnEnable()
             {
-                var follower = GetTarget();
+                SceneView.duringSceneGui += OnSceneGUI;
+            }
+            
+            void OnDisable()
+            {
+                SceneView.duringSceneGui -= OnSceneGUI;
             }
 
-            public void OnSceneGUI()
+            public void OnSceneGUI(SceneView sceneView)
             {
-                var follower = GetTarget();
-                var points = follower.points;
+                var pointsInfo = GetTarget();
+                var points = pointsInfo.points;
                 if(points == null) return;
                 bool isDirty = false;                
                 for (int i = 0; i < points.Length; ++i)
                 {
                     DrawPointOnScene(i, ref points[i], ref isDirty);           
                 }
-                if (isDirty) follower.points = points;
+                if (isDirty) pointsInfo.points = points;
 
                 var positions = points.Select(point => point.position).ToList();
-                if(follower.loop) positions.Add(points[0].position);
+                if(pointsInfo.loop) positions.Add(points[0].position);
                 Handles.DrawPolyLine(positions.ToArray());
             }
 
-            void DrawPointOnScene(int index, ref Ashe.Animation.PointFollower.PointInfo pointInfo, ref bool isDirty)
+            void DrawPointOnScene(int index, ref Ashe.Animation.PointsInfo.PointEvent pointInfo, ref bool isDirty)
             {
                 Handles.Label(pointInfo.position, index.ToString());
                 EditorGUI.BeginChangeCheck();
@@ -56,7 +58,7 @@ namespace Ashe
                 {
                     isDirty = true;
                     pointInfo.position = pointHandle;
-                }    
+                }
             }
         }
     }
