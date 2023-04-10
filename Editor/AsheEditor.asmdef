@@ -1,0 +1,18 @@
+{
+    "name": "AsheEditor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:3e443932a855fcf46b8e4cafa93eb8b2"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

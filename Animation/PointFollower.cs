@@ -2,6 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Core.PathCore;
+using DG.Tweening.Plugins.Options;
+using System.Linq;
+using UnityEngine.Events; 
 
 namespace Ashe
 {
@@ -13,10 +19,10 @@ namespace Ashe
         public class PointFollower : MonoBehaviour
         {
             [Serializable]
-            struct PointInfo
+            public struct PointInfo
             {
                 public Vector3 position;
-                public Action<PointFollower> onReached;
+                public UnityEvent<PointFollower> onReached;
             }
 
             // 操作対象のTransform。NULLの場合は自身のTransformを自動代入する。
@@ -25,12 +31,22 @@ namespace Ashe
 
             // 辿るポイント達
             [SerializeField]
-            PointInfo[] points;
+            PointInfo[] _points;
+            public PointInfo[] points
+            {
+                get { return _points; }
+                #if UNITY_EDITOR
+                set { _points = value; }
+                #endif
+            }
+
 
             // 終着点に到着した後に始点にループするかどうか
             [SerializeField]
-            bool loop;
-
+            bool _loop;
+            public bool loop {
+                get { return _loop; }
+            }
             // 追いかけるモード
             enum MOVEMENT_MODE
             {
@@ -54,11 +70,14 @@ namespace Ashe
             [SerializeField]
             float duration = 1.0f;
 
+            // どれくらい進行方向を向くか
+            [SerializeField]
+            float lookAtRate = 0.3f;
+
             // 再生中かどうか
-            bool playing;
             public bool isPlaying
             {
-                get { return playing; }
+                get { return tweener.IsPlaying(); }
             }
 
             // 起動時にPlayするかどうか
@@ -71,74 +90,51 @@ namespace Ashe
             // 全長
             float fullLength;
 
+            // Tweener
+            TweenerCore<Vector3, Path, PathOptions> tweener;
+
             void Start()
             {
-                playing = playOnAwake;
                 if (target == null) target = transform;
                 Initialize();
+                if(!playOnAwake) tweener.Pause();
             }
 
             // 初期化処理
             // 全長を計算して速度を求める
             void Initialize()
             {
-                // 速度をDURATIONで制御する場合は初期化で計算する
-                if (speedMode == SPEED_MODE.BY_DURATION)
+                if (speedMode == SPEED_MODE.BY_SPEED)
                 {
                     fullLength = 0.0f;
                     for (int i = 1; i < points.Length; ++i)
                     {
                         fullLength += Vector3.Magnitude(points[i].position - points[i - 1].position);
                     }
-                    if (duration > Ashe.Const.Float.EPSILON)
+                    if (speed > Ashe.Const.Float.EPSILON)
                     {
-                        speed = fullLength / duration;
+                        duration = fullLength / speed;
                     }
                 }
                 // 初期座標の設定
                 target.position = points[0].position;
                 targetIndex = 1;
-                if(targetIndex >= points.Length) {
+                if (targetIndex >= points.Length)
+                {
                     Debug.Log.W("Points length is 1");
-                    playing = false;
+                    return;
                 }
-            }
 
-            void Update()
-            {
-                if (!isPlaying) return;
-                Vector3 toTarget = points[targetIndex].position - target.position;
-                float sqrDistanceToNext = Vector3.SqrMagnitude(toTarget);
-                float deltaTimedSpeed = speed * Time.deltaTime;
-                float sqrSpeed = deltaTimedSpeed * deltaTimedSpeed;
-                if (sqrDistanceToNext <= sqrSpeed)
-                {
-                    if (points[targetIndex].onReached != null)
-                    {
-                        points[targetIndex].onReached(this);
-                        // onReachedの中でpauseされることがある
-                        if (!isPlaying) return;
-                    }
+                tweener = target.DOPath(
+                    path: points.Select(point => point.position).ToArray(),
+                    duration: duration
+                ).OnWaypointChange(pointNo =>
+                { 
+                    points[pointNo].onReached?.Invoke(this);
+                });
 
-                    // ループする場合は先頭インデックスにターゲットを戻す
-                    if (loop)
-                    {
-                        int next = (targetIndex + 1) % points.Length;
-                        Vector3 direction = Vector3.Normalize(points[next].position - points[targetIndex].position);
-                        target.position = points[targetIndex].position + direction * (deltaTimedSpeed - Mathf.Sqrt(sqrDistanceToNext));
-                        targetIndex = next;
-                    }
-                    else
-                    {
-                        target.position = points[targetIndex].position;
-                        // 最後の目標地点であれば移動を停止する
-                        if(targetIndex == points.Length-1) playing = false;
-                    }
-                }
-                else
-                {
-                    target.position += toTarget.normalized * deltaTimedSpeed;
-                }
+                if(lookAtRate > Ashe.Const.Float.EPSILON) tweener.SetLookAt(lookAtRate, Vector3.forward);
+                if(loop) tweener.SetLoops(-1);            
             }
         }
     }
