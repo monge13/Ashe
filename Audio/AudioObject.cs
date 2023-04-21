@@ -11,6 +11,12 @@ namespace Ashe
         [SerializeField]
         private AudioSource source;
 
+        private bool _loop = false;
+        public bool loop 
+        {
+            get { return _loop; }
+        }
+
         /// <summary>
         /// 再生中かどうかを取得する
         /// </summary>
@@ -51,6 +57,7 @@ namespace Ashe
         /// <param name="clip">再生対象のAudioClip</param>
         public void Play(AudioClip clip)
         {
+            _loop = true;
             source.clip = clip;
             source.Play();
         }
@@ -63,11 +70,5 @@ namespace Ashe
             source.Stop();
         }
 
-        /// <summary>
-        /// 再生中の更新処理 
-        /// </summary>
-        public void UpdateAudio()
-        {
-        }
     }
 }

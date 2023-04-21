@@ -1,5 +1,6 @@
-using UnityEngine;
 using System.IO;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Audio;
 
 namespace Ashe
@@ -39,6 +40,11 @@ namespace Ashe
         private BGMPlayer bgmPlayerPrefab;
 
         /// <summary>
+        /// 再生中のAudioObjec
+        /// </summary>
+        List<AudioObject> playingAudioObjects = new List<AudioObject>(10);
+
+        /// <summary>
         /// BGM再生の管理
         /// </summary>
         /// <returns></returns>
@@ -50,6 +56,7 @@ namespace Ashe
         private int initialAudioObjectNum = 10;
 
         const string POOLED_OBJECT_NAME = "AudioObject";
+        uint pooledObjectKey;
 
         /// <summary>
         /// 初期化処理
@@ -57,32 +64,40 @@ namespace Ashe
         protected override void Init()
         {
             bgmPlayer = Instantiate<BGMPlayer>(bgmPlayerPrefab, transform);
-            objectPool.Pool(POOLED_OBJECT_NAME, audioObjectPrefab, initialAudioObjectNum, parent:transform);
+            pooledObjectKey = (uint)POOLED_OBJECT_NAME.GetHashCode();
+            objectPool.Pool(pooledObjectKey, audioObjectPrefab, initialAudioObjectNum, parent:transform);
         }
 
         /// <summary>
-        /// SEを再生する 
+        /// SEを再生する
         /// </summary>
-        public void PlaySE(string name)
+        /// <param name="name">再生するClip名</param>
+        /// <param name="loop">ループSEかどうか</param>
+        /// <returns>再生中のAudioObject</returns>
+        public AudioObject PlaySE(string name, bool loop = false)
         {
             AudioClip clip = getOrLoadClip(name);
-            if(clip == null) return;
+            if(clip == null) return null;
 
-            AudioObject audioObject = objectPool.Get(POOLED_OBJECT_NAME);
+            AudioObject audioObject = objectPool.Get(pooledObjectKey);
             audioObject.gameObject.SetActive(true);
-            audioObject.Play(clip);
+            if(loop) audioObject.Play(clip);
+            else audioObject.PlayOneShot(clip);
+
+            playingAudioObjects.Add(audioObject);
+            return audioObject;
         }
 
         /// <summary>
         /// BGMを再生する
         /// </summary>
-        /// <param name="name">再生するClip</param>
+        /// <param name="name">再生するClip名</param>
         /// <param name="fadeDuration">フェード時間</param>
         public void PlayBGM(string name, float fadeDuration = 0.0f)
         {
             AudioClip clip = getOrLoadClip(name);
             if(clip == null) return;
-            bgmPlayer.play(clip, fadeDuration);
+            bgmPlayer.Play(clip, fadeDuration);
         }
 
         /// <summary>
@@ -104,6 +119,21 @@ namespace Ashe
                 clips.Add(hash, clip);
             }
             return clip;
+        }
+
+
+        void Update()
+        {
+            int i = playingAudioObjects.Count - 1;
+            while(i >= 0){
+                var obj = playingAudioObjects[i];
+                if(!obj.isPlaying && !obj.loop) {
+                    objectPool.Return(pooledObjectKey, obj);          
+                    obj.gameObject.SetActive(false);          
+                    playingAudioObjects.RemoveAt(i);
+                }
+                --i;
+            }
         }
     }
 }

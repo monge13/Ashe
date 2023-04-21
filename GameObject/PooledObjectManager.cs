@@ -68,18 +68,49 @@ namespace Ashe
         /// <returns>プールから取得したオブジェクト</returns>
         public T Get(uint key)
         {
+            Queue<T> q = GetQueue(key);
+            if(q.Count == 0)
+            {
+                return null;
+            }
+            return q.Dequeue();
+        }
+
+        /// <summary>
+        /// プールから取得したオブジェクトを返却する
+        /// </summary>
+        /// <param name="name">取得時の名前</param>
+        /// <param name="obj">返却したいオブジェクト</param>
+        public void Return(string name, T obj)
+        {
+            Return((uint)name.GetHashCode(), obj);
+        }
+
+        /// <summary>
+        /// プールから取得したオブジェクトを返却する
+        /// </summary>
+        /// <param name="key">オブジェクト取得時に使用したKey</param>
+        /// <param name="obj">返却したいオブジェクト</param>
+        public void Return(uint key, T obj)
+        {
+            Queue<T> q = GetQueue(key);
+            q.Enqueue(obj);
+        }
+
+        /// <summary>
+        /// Objectを格納したQueueを取得する        
+        /// </summary>
+        /// <param name="key">取得したいPoolに対応したKey</param>
+        /// <returns>Keyに対応したObjectPoolのQueue</returns>
+        Queue<T> GetQueue(uint key)
+        {
             Queue<T> q;
             if (!dictionary.TryGetValue(key, out q))
             {
                 q = new Queue<T>();
                 dictionary.Add(key, q);
             }
-
-            if(q.Count == 0)
-            {
-                return null;
-            }
-            return q.Dequeue();
+            return q;
         }
 
 
