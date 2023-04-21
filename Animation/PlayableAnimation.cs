@@ -90,7 +90,7 @@ namespace Ashe
             public void Initialize(int maxBlendNum = 2)
             {
                 playableGraph = PlayableGraph.Create();
-                mixer = AnimationMixerPlayable.Create(playableGraph, maxBlendNum, true);
+                mixer = AnimationMixerPlayable.Create(playableGraph, maxBlendNum);
             }
 
             /// <summary>
