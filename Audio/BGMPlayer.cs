@@ -31,7 +31,7 @@ public class BGMPlayer : MonoBehaviour
     /// </summary>
     /// <param name="clip"></param>
     /// <param name="fadeDuration"></param>
-    public void play(AudioClip clip, float fadeDuration)
+    public void Play(AudioClip clip, float fadeDuration)
     {
         int currentPlayingGroup = (int)playingGroup;
         int newPlayGroup = ((int)playingGroup+1) % 2;
