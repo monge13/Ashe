@@ -2,7 +2,9 @@
     "name": "AsheEditor",
     "rootNamespace": "",
     "references": [
-        "GUID:3e443932a855fcf46b8e4cafa93eb8b2"
+        "GUID:3e443932a855fcf46b8e4cafa93eb8b2",
+        "GUID:5c1ff9bd975acec488150743d53a93ca",
+        "GUID:c5ecc461727906345a35491a0440694f"
     ],
     "includePlatforms": [
         "Editor"
