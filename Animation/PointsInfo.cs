@@ -14,33 +14,11 @@ namespace Ashe
         [CreateAssetMenu(menuName = "Ashe/Animation/PointFollowerData")]
         public class PointsInfo : ScriptableObject
         {
-            // 移動目標のデータクラス
-            [Serializable]
-            public struct PointData
-            {
-                public Vector3 position;
-                public PointEvent[] events;
-            }
-
-            /// <summary>
-            /// 移動目標についたときに発生させるEvent
-            /// </summary>
-            [Serializable]
-            public class PointEvent
-            {
-                public string name;
-                public float value;
-            }
-
-            // 座標情報と接触時のイベント情報
             [SerializeField]
-            PointData[] _points;
-            public PointData[] points
+            Vector3[] _points;
+            public Vector3[] points
             {
                 get { return _points; }
-#if UNITY_EDITOR
-                set { _points = value; }
-#endif
             }
 
             // 追いかけるときの速度を決める要因
@@ -81,9 +59,9 @@ namespace Ashe
                 float fullLength = 0.0f;
                 for (int i = 1; i < _points.Length; ++i)
                 {
-                    fullLength += Vector3.Magnitude(_points[i].position - _points[i - 1].position);
+                    fullLength += Vector3.Magnitude(_points[i] - _points[i - 1]);
                 }
-                if(loop) fullLength += Vector3.Magnitude(_points[0].position - _points[_points.Length-1].position);
+                if(loop) fullLength += Vector3.Magnitude(_points[0] - _points[_points.Length-1]);
                 return fullLength;
             }
 
@@ -100,14 +78,6 @@ namespace Ashe
                     }
                 }
                 return duration;
-            }
-
-            // 座標配列を返す
-            public Vector3[] GetPositions()
-            {
-                List<Vector3> positions = _points.Select(point => point.position).ToList();
-                if(loop) positions.Add(_points[0].position);
-                return positions.ToArray();
             }
         }
     }

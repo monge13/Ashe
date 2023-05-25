@@ -9,11 +9,6 @@ namespace Ashe
 {
     namespace Animation
     {
-        public interface PointFollowerReachedEventListner
-        {
-            void onReached(int index, string name, float value);
-        }
-
         /// <summary>
         /// ポイントをおいてその上を辿る機能
         /// </summary>
@@ -22,17 +17,6 @@ namespace Ashe
             // 操作対象のTransform。NULLの場合は自身のTransformを自動代入する。
             [SerializeField]
             Transform target;
-
-            // ポイント到着のイベントを受け取るオブジェクト
-            List<PointFollowerReachedEventListner> eventReceiveres;
-            void AddEventReceiver(PointFollowerReachedEventListner receiver)
-            {
-                eventReceiveres.Add(receiver);
-            }
-            void RemoveEventReceiver(PointFollowerReachedEventListner receiver)
-            {
-                eventReceiveres.Remove(receiver);
-            }
 
             // 辿るポイント達
             [SerializeField]
@@ -43,6 +27,9 @@ namespace Ashe
                 get { return _pointsInfo; }
             }
             #endif
+
+            // 一個前に到着したポイント
+            int oldReachedNo = -1;
 
             // 再生中かどうか
             public bool isPlaying
@@ -93,7 +80,7 @@ namespace Ashe
                 if(_pointsInfo == null) return;
 
                 // 初期座標の設定
-                target.position = _pointsInfo.points[0].position;
+                target.position = _pointsInfo.points[0];
                 targetIndex = 1;
                 if (targetIndex >= _pointsInfo.points.Length)
                 {
@@ -102,29 +89,26 @@ namespace Ashe
                 }
 
                 tweener = target.DOPath(
-                    path: _pointsInfo.GetPositions(),
+                    path: _pointsInfo.points,
                     duration: _pointsInfo.GetDuration()
                 ).OnWaypointChange(pointNo =>
                 { 
                     if(pointNo >= _pointsInfo.points.Length) {
                         return;
                     }
-                    
-                    if(eventReceiveres == null) {
-                        return;
+                    // ループした際に同じ番号が呼ばれることがある。
+                    if(pointNo != oldReachedNo) {
+                        onReachedPoint(pointNo);
                     }
-
-                    // レシーバー全てにイベントを渡す
-                    foreach (var receiver in eventReceiveres)
-                    {
-                        foreach(var pointEvent in _pointsInfo.points[pointNo].events){
-                            receiver.onReached(pointNo, pointEvent.name, pointEvent.value);
-                        }
-                    }
+                    oldReachedNo = pointNo;
                 });
 
                 if(_pointsInfo.lookAtRate > Ashe.Const.Float.EPSILON) tweener.SetLookAt(_pointsInfo.lookAtRate, Vector3.forward);
                 if(_pointsInfo.loop) tweener.SetLoops(-1);            
+            }
+
+            protected virtual void onReachedPoint(int pointNo)
+            {
             }
         }
     }

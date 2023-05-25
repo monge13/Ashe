@@ -32,32 +32,25 @@ namespace Ashe
             public void OnSceneGUI(SceneView sceneView)
             {
                 var pointsInfo = GetTarget();
-                var points = pointsInfo.points;
-                if(points == null) return;
                 bool isDirty = false;                
-                for (int i = 0; i < points.Length; ++i)
+                for (int i = 0; i < pointsInfo.points.Length; ++i)
                 {
-                    DrawPointOnScene(i, ref points[i], ref isDirty);           
+                    DrawPointOnScene(i, ref pointsInfo);           
                 }
-                if (isDirty) pointsInfo.points = points;
-
-                var positions = points.Select(point => point.position).ToList();
-                if(pointsInfo.loop) positions.Add(points[0].position);
-                Handles.DrawPolyLine(positions.ToArray());
+                Handles.DrawPolyLine(pointsInfo.points);
             }
 
-            void DrawPointOnScene(int index, ref Ashe.Animation.PointsInfo.PointData pointInfo, ref bool isDirty)
+            void DrawPointOnScene(int index, ref Ashe.Animation.PointsInfo pointInfo)
             {
-                Handles.Label(pointInfo.position, index.ToString());
+                Handles.Label(pointInfo.points[index], index.ToString());
                 EditorGUI.BeginChangeCheck();
                 var pointHandle = Handles.PositionHandle(
-                    pointInfo.position,
+                    pointInfo.points[index],
                     Quaternion.identity
                 );
                 if (EditorGUI.EndChangeCheck())
                 {
-                    isDirty = true;
-                    pointInfo.position = pointHandle;
+                   pointInfo.points[index] = pointHandle;
                 }
             }
         }
