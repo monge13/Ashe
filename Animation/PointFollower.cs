@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using DG.Tweening.Core;
@@ -8,6 +9,11 @@ namespace Ashe
 {
     namespace Animation
     {
+        public interface PointFollowerReachedEventListner
+        {
+            void onReached(int index, string name, float value);
+        }
+
         /// <summary>
         /// ポイントをおいてその上を辿る機能
         /// </summary>
@@ -16,6 +22,17 @@ namespace Ashe
             // 操作対象のTransform。NULLの場合は自身のTransformを自動代入する。
             [SerializeField]
             Transform target;
+
+            // ポイント到着のイベントを受け取るオブジェクト
+            List<PointFollowerReachedEventListner> eventReceiveres;
+            void AddEventReceiver(PointFollowerReachedEventListner receiver)
+            {
+                eventReceiveres.Add(receiver);
+            }
+            void RemoveEventReceiver(PointFollowerReachedEventListner receiver)
+            {
+                eventReceiveres.Remove(receiver);
+            }
 
             // 辿るポイント達
             [SerializeField]
@@ -92,7 +109,18 @@ namespace Ashe
                     if(pointNo >= _pointsInfo.points.Length) {
                         return;
                     }
-                    _pointsInfo.points[pointNo].onReached?.Invoke(this);
+                    
+                    if(eventReceiveres == null) {
+                        return;
+                    }
+
+                    // レシーバー全てにイベントを渡す
+                    foreach (var receiver in eventReceiveres)
+                    {
+                        foreach(var pointEvent in _pointsInfo.points[pointNo].events){
+                            receiver.onReached(pointNo, pointEvent.name, pointEvent.value);
+                        }
+                    }
                 });
 
                 if(_pointsInfo.lookAtRate > Ashe.Const.Float.EPSILON) tweener.SetLookAt(_pointsInfo.lookAtRate, Vector3.forward);

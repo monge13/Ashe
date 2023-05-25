@@ -16,16 +16,26 @@ namespace Ashe
         {
             // 移動目標のデータクラス
             [Serializable]
-            public struct PointEvent
+            public struct PointData
             {
                 public Vector3 position;
-                public UnityEvent<PointFollower> onReached;
+                public PointEvent[] events;
+            }
+
+            /// <summary>
+            /// 移動目標についたときに発生させるEvent
+            /// </summary>
+            [Serializable]
+            public class PointEvent
+            {
+                public string name;
+                public float value;
             }
 
             // 座標情報と接触時のイベント情報
             [SerializeField]
-            PointEvent[] _points;
-            public PointEvent[] points
+            PointData[] _points;
+            public PointData[] points
             {
                 get { return _points; }
 #if UNITY_EDITOR

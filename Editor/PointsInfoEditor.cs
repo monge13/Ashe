@@ -46,7 +46,7 @@ namespace Ashe
                 Handles.DrawPolyLine(positions.ToArray());
             }
 
-            void DrawPointOnScene(int index, ref Ashe.Animation.PointsInfo.PointEvent pointInfo, ref bool isDirty)
+            void DrawPointOnScene(int index, ref Ashe.Animation.PointsInfo.PointData pointInfo, ref bool isDirty)
             {
                 Handles.Label(pointInfo.position, index.ToString());
                 EditorGUI.BeginChangeCheck();
