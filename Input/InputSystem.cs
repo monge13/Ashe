@@ -45,7 +45,7 @@ namespace Ashe
         /// <summary>
         /// 有効な入力デバイスに対応したクラスを作成する 
         /// </summary>
-        void Start()
+        override protected void Init()
         {
             if (useKeyboard)
             {
