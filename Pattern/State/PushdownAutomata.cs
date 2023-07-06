@@ -24,7 +24,7 @@ namespace Ashe.Pattern
         /// ctor 
         /// </summary>
         /// <param name="capacity"></param>
-        PushdownAutomata(int capacity = DEFAULT_STACK_CAPACITY)
+        public PushdownAutomata(int capacity = DEFAULT_STACK_CAPACITY)
         {
             states = new Stack<State<T>>(capacity);
         }
