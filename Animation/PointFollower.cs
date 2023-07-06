@@ -84,7 +84,7 @@ namespace Ashe
                 targetIndex = 1;
                 if (targetIndex >= _pointsInfo.points.Length)
                 {
-                    Debug.Log.W("Points length is 1");
+                    D.Log.W("Points length is 1");
                     return;
                 }
 

@@ -113,7 +113,7 @@ namespace Ashe
             if(!clips.TryGetValue(hash, out clip)){
                 string path = Path.Join("Audio", name);
 
-                Debug.Log.I(path);
+                D.Log.I(path);
                 // TODO: ResourceManager
                 clip = Resources.Load<AudioClip>(path);
                 clips.Add(hash, clip);
