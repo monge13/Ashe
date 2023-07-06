@@ -8,7 +8,7 @@ namespace Ashe.Pattern
     /// 例えば座っている行動の状態でかつ、射撃というように二つのStateを行うときにこれを使うと便利 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    class PushdownAutomata<T> where T : class
+    public class PushdownAutomata<T> where T : class
     {
         /// <summary>
         /// StateのStack  
