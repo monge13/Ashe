@@ -7,7 +7,7 @@ using UnityEditor;
 
 namespace Ashe
 {
-    public class Debug
+    public class D
     {
         [Conditional("_LOG_ENABLED")]
         public static void Assert(bool flag, string message = "assertion failed")
