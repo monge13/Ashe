@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Animations;
 using Ashe.Collection;
@@ -10,11 +11,21 @@ namespace Ashe
         /// <summary>
         /// Characterなどでコンポジットして使用
         /// </summary>
-        public class PlayableAnimation
+        public class PlayableAnimation : IDisposable
         {
+            bool disposed = false;
+
             ~PlayableAnimation()
             {
-                playableGraph.Destroy();
+                Dispose();
+            }
+
+            public void Dispose()
+            {
+                if(!disposed){
+                    playableGraph.Destroy();
+                    disposed = true;
+                }
             }
 
             /// <summary>
