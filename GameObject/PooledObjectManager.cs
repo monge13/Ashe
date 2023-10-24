@@ -10,7 +10,7 @@ namespace Ashe
     /// 複数の型に対してプールが必要な場合は型ごとに定義が必要 
     /// </summary>
     /// <typeparam name="T">プールしたいオブジェクトの型</typeparam>
-    public class PooledObjectManager<T> : Pattern.Singleton<PooledObjectManager<T>> where T : MonoBehaviour
+    public class PooledObjectManager<T> : Pattern.Singleton<PooledObjectManager<T>> where T : Component
     {
         /// <summary>
         /// プレハブを指定された回数Instantiateしてプールする
