@@ -17,41 +17,19 @@ public class ActionClip : ScriptableObject
     AnimationClip _animationClip;
     public AnimationClip animationClip { get { return _animationClip; } }
     
+    AnimationClipPlayable _playable;
+    public AnimationClipPlayable playable { get { return _playable; } }
+
     // サウンド再生関係のイベント
     [SerializeField]
     List<AudioEvent> _audioEventList;
     public List<AudioEvent> audioEventList {  get { return _audioEventList;} }
 
-    // Animation再生用のグラフ
-    PlayableGraph _graph;
-
     // 初期化処理グラフを作ったりする
-    public void Initialize(Animator target)
-    {
-        InitializeAnimation(target);
-    }
-
-    // Animationの初期化
-    private void InitializeAnimation(Animator target)
-    {
-        if(_graph.IsValid()) {
-            _graph.Destroy();
-        }
-        _graph = PlayableGraph.Create();
-        // TODO: 将来的にはMANUALにしてDeltaTimeを渡すようにする。ポーズ対応
-        _graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);        
-        // Graphにターゲットを設定
-        var playableOutput = AnimationPlayableOutput.Create(_graph, "Animation", target);        
-        // clip playableを作成
-        var clipPlayable = AnimationClipPlayable.Create(_graph, _animationClip);
-        // Targetにクリップを接続
-        playableOutput.SetSourcePlayable(clipPlayable);
-    }
-
-    public void Play()
-    {
-        if(!_graph.IsValid()) return;
-        _graph.Play();
+    public void Initialize(PlayableGraph graph)
+    {        
+        if(_playable.IsValid()) return;
+        _playable = AnimationClipPlayable.Create(graph, _animationClip);
     }
 
     // 更新処理
@@ -61,12 +39,6 @@ public class ActionClip : ScriptableObject
         foreach(var e in _audioEventList){
             e.Update(currentTime);
         }
-    }
-
-    // 終了処理リソースの開放を行う
-    public void Finalize()
-    {
-        if(_graph.IsValid()) _graph.Destroy();
     }
 
     /// <summary>
