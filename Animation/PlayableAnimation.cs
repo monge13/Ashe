@@ -22,7 +22,7 @@ namespace Ashe
 
             public void Dispose()
             {
-                if(!disposed && playableGraph != null){
+                if(!disposed){
                     playableGraph.Destroy();
                     disposed = true;
                 }
