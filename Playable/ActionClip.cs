@@ -24,10 +24,19 @@ public class ActionClip : ScriptableObject
 
     // Animation再生用のグラフ
     PlayableGraph _graph;
- 
+
     // 初期化処理グラフを作ったりする
     public void Initialize(Animator target)
     {
+        InitializeAnimation(target);
+    }
+
+    // Animationの初期化
+    private void InitializeAnimation(Animator target)
+    {
+        if(_graph.IsValid()) {
+            _graph.Destroy();
+        }
         _graph = PlayableGraph.Create();
         // TODO: 将来的にはMANUALにしてDeltaTimeを渡すようにする。ポーズ対応
         _graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);        
@@ -85,12 +94,40 @@ public class ActionClip : ScriptableObject
     /// SE再生イベント
     /// </summary>
     [Serializable]
-    public class AudioEvent
+    public class AudioEvent : KeyEvent
     {
         // 再生対象のSE
         [SerializeField]
         AudioClip _audioClip;
-        // SEが再生開始される時間
+
+        // SEの再生処理を行う
+        protected override void OnPlay()
+        {
+            AudioManager.I.PlaySE(_audioClip);
+        }
+    }
+
+    [Serializable]
+    public class EffectEvent : KeyEvent
+    {
+        // 再生対象のエフェクト
+        [SerializeField]
+        ParticleSystem _ps;
+
+        // SEの再生処理を行う
+        protected override void OnPlay()
+        {
+            
+        }
+    }
+
+    /// <summary>
+    /// 再生タイミングのKeyとなる時間を持ったEvent
+    /// </summary>
+    [Serializable]
+    public class KeyEvent
+    {
+        // S再生開始される時間
         [SerializeField]
         float _time;
         // 再生されたかどうか
@@ -107,8 +144,15 @@ public class ActionClip : ScriptableObject
         {
             if(isPlayed) return;
             if(currentTime < _time) return;
-            AudioManager.I.PlaySE(_audioClip);
+            OnPlay();
             isPlayed = true;
         }
+
+        // 継承して再生する処理を行う
+        protected virtual void OnPlay()
+        {
+
+        }
     }
+
 }

@@ -52,6 +52,20 @@ namespace Ashe
         }
 
         /// <summary>
+        /// すでにPoolされている数を返す
+        /// </summary>
+        /// <param name="key">Poolされているかどうかを知りたい対象のKey</param>
+        /// <returns></returns>
+        public int GetPooledNum(uint key)
+        {
+            Queue<T> q;
+            if (!dictionary.TryGetValue(key, out q)){
+                return q.Count;            
+            }
+            return 0;
+        }
+
+        /// <summary>
         /// プールしてあるオブジェクトを取得する　
         /// </summary>
         /// <param name="name">登録時に指定した名前</param>
@@ -113,6 +127,19 @@ namespace Ashe
             return q;
         }
 
+        /// <summary>
+        /// 指定したKeyのオブジェクトをDestoryする
+        /// </summary>
+        /// <param name="key">Destroy対象のKey</param>
+        public void Destroy(uint key)
+        {
+            var q = GetQueue(key);
+            while(q.Count > 0){
+                var obj = q.Dequeue();
+                GameObject.Destroy(obj);
+            }
+            dictionary.Remove(key);
+        }
 
         /// <summary>
         /// オブジェクトをプールするDictionary
