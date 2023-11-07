@@ -32,7 +32,7 @@ namespace Ashe
             public void OnSceneGUI(SceneView sceneView)
             {
                 var pointsInfo = GetTarget();
-                bool isDirty = false;                
+                //bool isDirty = false;                
                 for (int i = 0; i < pointsInfo.points.Length; ++i)
                 {
                     DrawPointOnScene(i, ref pointsInfo);           
