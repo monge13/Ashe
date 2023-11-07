@@ -13,6 +13,8 @@ namespace Ashe
             [SerializeField]
             AudioSource source;
 
+            public Transform cachedTransform;
+
             bool _loop = false;
             public bool loop 
             {
@@ -29,6 +31,11 @@ namespace Ashe
                 }
             }
 
+            void Start()
+            {
+                cachedTransform = transform;
+            }
+
             /// <summary>
             /// AudioObjectを作成する
             /// </summary>
@@ -36,9 +43,9 @@ namespace Ashe
             /// <returns></returns>
             static public AudioObject Create(Transform parent)
             {
-                GameObject obj = new GameObject("AudioObject");            
-                obj.transform.parent = parent;
+                GameObject obj = new GameObject("AudioObject");                 
                 obj.AddComponent<AudioSource>();
+                obj.transform.parent = parent;
                 return obj.AddComponent<AudioObject>();
             }
 

@@ -20,6 +20,13 @@ namespace Ashe
             AudioMixer mixer;
 
             /// <summary>
+            /// AudioObjectをPoolしておくRoot
+            /// nullの場合はComponentがついているオブジェクト下につく
+            /// </summary>
+            [SerializeField]
+            Transform cacheRoot;
+
+            /// <summary>
             /// AudioObjectのPool
             /// </summary>
             private PooledObjectManager<AudioObject> objectPool = new PooledObjectManager<AudioObject>();
@@ -65,9 +72,10 @@ namespace Ashe
             /// </summary>
             protected override void Init()
             {
+                if(cacheRoot == null) cacheRoot = transform;
                 bgmPlayer = Instantiate<BGMPlayer>(bgmPlayerPrefab, transform);
                 pooledObjectKey = (uint)POOLED_OBJECT_NAME.GetHashCode();
-                objectPool.Pool(pooledObjectKey, audioObjectPrefab, initialAudioObjectNum, parent:transform);
+                objectPool.Pool(pooledObjectKey, audioObjectPrefab, initialAudioObjectNum, parent:cacheRoot);
             }
 
             /// <summary>
@@ -121,7 +129,7 @@ namespace Ashe
             public void PlayBGM(AudioClip clip, float fadeDuration = 0.0f)
             {
                 bgmPlayer.Play(clip, fadeDuration);
-            }        
+            }
 
             /// <summary>
             /// 手動でAudioObjectを返却する
@@ -146,7 +154,7 @@ namespace Ashe
                 if(!clips.TryGetValue(hash, out clip)){
                     string path = Path.Join("Audio", name);
 
-                    D.Log.I(path);
+                    D.Log.I("Load Audio File : " + path);
                     // TODO: ResourceManager
                     clip = Resources.Load<AudioClip>(path);
                     clips.Add(hash, clip);
@@ -162,6 +170,7 @@ namespace Ashe
                     if(!obj.isPlaying && !obj.loop) {
                         objectPool.Return(pooledObjectKey, obj);
                         obj.gameObject.SetActive(false);
+                        obj.cachedTransform.parent = cacheRoot;
                         playingAudioObjects.RemoveAt(i);
                     }
                     --i;

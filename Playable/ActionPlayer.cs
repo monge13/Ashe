@@ -11,8 +11,12 @@ namespace Ashe{
     /// </summary>
     public class ActionPlayer : MonoBehaviour
     {
+        // Animationを再生するターゲット
         [SerializeField]
         Animator _animationTarget;
+
+        // 再生対象のTransform
+        Transform _targetTransform;
 
         // 再生中のClip
         ActionClip _clip;
@@ -38,6 +42,8 @@ namespace Ashe{
 
         void Start()
         {
+            _targetTransform = _animationTarget.transform;
+            // Animation関連の初期化
             _graph = PlayableGraph.Create();
             // TODO: 将来的にはMANUALにしてDeltaTimeを渡すようにする。ポーズ対応
             _graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
@@ -75,7 +81,8 @@ namespace Ashe{
         {
             _time = 0.0f;
             _clip = clip;
-            _clip.Initialize(_graph);
+            _clip.Initialize(_graph, _targetTransform);
+
             animationLength = _clip.animationClip.length;
 
             // 現在使用中のインデックスではない方を開けて再生する
