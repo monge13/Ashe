@@ -5,6 +5,10 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Animations;
 using Ashe.Audio;
+using Ashe.Effect;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Ashe
 {
@@ -50,7 +54,6 @@ namespace Ashe
                 {
                     e.Initialize(root);
                 }
-
             }
 
             // PlayableをDestroyする
@@ -90,109 +93,132 @@ namespace Ashe
                     e.Loop();
                 }
             }
-        }
         
-        /// <summary>
-        /// SE再生イベント
-        /// </summary>
-        [Serializable]
-        public class AudioEvent : KeyEvent
-        {
-            // 再生対象のSE
-            [SerializeField]
-            AudioClip _audioClip;
 
-            // SEの再生処理を行う
-            protected override void OnPlay()
+#if UNITY_EDITOR
+            // Editorでのセットアップ用にGUIDを更新する
+            public void UpdateGUIDs()
             {
-                var obj = AudioManager.I.PlaySE(_audioClip);
-                if(hasParent) obj.transform.parent = _parent;
+                 foreach(var e in _effectEventList){
+                    e.UpdateGUID();
+                }               
             }
-        }
-
-        [Serializable]
-        public class EffectEvent : KeyEvent
-        {
-            // 再生対象のエフェクト
-            [SerializeField]
-            ParticleSystem _ps;
-            
-            [HideInInspector]
-            [SerializeField]
-            uint key;
-
-            protected override void OnInitialize()
+#endif
+            /// <summary>
+            /// SE再生イベント
+            /// </summary>
+            [Serializable]
+            public class AudioEvent : KeyEvent
             {
-                
-            }
+                // 再生対象のSE
+                [SerializeField]
+                AudioClip _audioClip;
 
-            // Effectの再生処理を行う
-            protected override void OnPlay()
-            {
-                
-            }
-        }
-
-        /// <summary>
-        /// 再生タイミングのKeyとなる時間を持ったEvent
-        /// </summary>
-        [Serializable]
-        public class KeyEvent
-        {
-            // 再生する再の親オブジェクト
-            [SerializeField]
-            string _parentTransformName;
-            // 再生位置のオフセット
-            [SerializeField]
-            protected Vector3 _offset;
-            // 再生方向
-            [SerializeField]
-            protected Vector3 _rotation;
-
-            // 再生開始される時間
-            [SerializeField]
-            float _time;
-            // 再生されたかどうか
-            bool isPlayed;
-            // 再生する再親のTransform
-            protected Transform _parent;
-            protected bool hasParent {
-                get {
-                    return !string.IsNullOrEmpty(_parentTransformName) && _parent != null;
+                // SEの再生処理を行う
+                protected override void OnPlay()
+                {
+                    var obj = AudioManager.I.PlaySE(_audioClip);
+                    if(hasParent) obj.transform.parent = _parent;
                 }
             }
 
-            // AnimationがLoopしたのでSEを再生していないことにする
-            public void Loop()
+            [Serializable]
+            public class EffectEvent : KeyEvent
             {
-            isPlayed = false;
+                // 再生対象のエフェクト
+                [SerializeField]
+                ParticleSystem _ps;
+                
+                [HideInInspector]
+                [SerializeField]
+                uint guid;
+
+#if UNITY_EDITOR
+                // Editorでのセットアップ用にGUIDを更新する
+                public void UpdateGUID()
+                {
+                    if(_ps != null) {
+                        string s = AssetDatabase.GetAssetPath(_ps);
+                        guid = (uint)AssetDatabase.AssetPathToGUID(s).GetHashCode();          
+                    }
+                }
+#endif
+
+                // EffectManagerに登録する
+                protected override void OnInitialize()
+                {
+                    EffectManager.I.poolObject(guid, _ps, 1);
+                }
+
+                // Effectの再生処理を行う
+                protected override void OnPlay()
+                {
+                    EffectManager.I.poolObject(guid, _ps, 1);
+                }
             }
 
-            // 時間を与えて更新する
-            public void Update(float currentTime)
+            /// <summary>
+            /// 再生タイミングのKeyとなる時間を持ったEvent
+            /// </summary>
+            [Serializable]
+            public class KeyEvent
             {
-                if(isPlayed) return;
-                if(currentTime < _time) return;
-                OnPlay();
-                isPlayed = true;
-            }
+                // 再生する再の親オブジェクト
+                [SerializeField]
+                string _parentTransformName;
+                // 再生位置のオフセット
+                [SerializeField]
+                protected Vector3 _offset;
+                // 再生方向
+                [SerializeField]
+                protected Vector3 _rotation;
 
-            public void Initialize(Transform root)
-            {
-                if(string.IsNullOrEmpty(_parentTransformName)) return;
-                _parent = root.Find(_parentTransformName);
-                OnInitialize();
-            }
+                // 再生開始される時間
+                [SerializeField]
+                float _time;
+                // 再生されたかどうか
+                bool isPlayed;
+                // 再生する再親のTransform
+                protected Transform _parent;
+                protected bool hasParent {
+                    get {
+                        return !string.IsNullOrEmpty(_parentTransformName) && _parent != null;
+                    }
+                }
 
-            // 継承してイベントごとの初期化処理を行う
-            protected virtual void OnInitialize()
-            {
-            }
+                // AnimationがLoopしたのでSEを再生していないことにする
+                public void Loop()
+                {
+                isPlayed = false;
+                }
 
-            // 継承してイベントごとの再生する処理を行う
-            protected virtual void OnPlay()
-            {
+                // 時間を与えて更新する
+                public void Update(float currentTime)
+                {
+                    if(isPlayed) return;
+                    if(currentTime < _time) return;
+                    OnPlay();
+                    isPlayed = true;
+                }
 
+                public void Initialize(Transform root)
+                {
+                    if(!string.IsNullOrEmpty(_parentTransformName)){
+                        _parent = root.Find(_parentTransformName);
+                    }
+                    OnInitialize();
+                }
+
+                // 継承してイベントごとの初期化処理を行う
+                protected virtual void OnInitialize()
+                {
+                }
+
+                // 継承してイベントごとの再生する処理を行う
+                protected virtual void OnPlay()
+                {
+
+                }
             }
         }
     }
