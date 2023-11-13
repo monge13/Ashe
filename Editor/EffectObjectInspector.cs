@@ -1,4 +1,5 @@
-using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 
 namespace Ashe
@@ -6,7 +7,7 @@ namespace Ashe
     namespace Editor
     {
         [CustomEditor(typeof(Ashe.Clip.ActionClip))]
-        public class ActionClipInspector : UnityEditor.Editor
+        public class EffectObjectInspector : UnityEditor.Editor
         {
             public override void OnInspectorGUI()
             {
@@ -14,8 +15,8 @@ namespace Ashe
                 base.OnInspectorGUI();
                 if (EditorGUI.EndChangeCheck())
                 {
-                    var clip = target as Ashe.Clip.ActionClip;
-                    if(clip != null) clip.UpdateGUIDs();
+                    var eo = target as Effect.EffectObject;
+                    if(eo != null) eo.UpdateGUID();
                 }
             }
         }

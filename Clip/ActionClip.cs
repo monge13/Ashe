@@ -6,9 +6,6 @@ using UnityEngine.Playables;
 using UnityEngine.Animations;
 using Ashe.Audio;
 using Ashe.Effect;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace Ashe
 {
@@ -71,13 +68,16 @@ namespace Ashe
                 foreach(var e in _audioEventList){
                     e.Update(currentTime);
                 }
+                foreach(var e in _effectEventList){
+                    e.Update(currentTime);
+                }
             }
 
             /// <summary>
             /// 指定した時間移行のイベントを初期化する
             /// </summary>
             /// <param name="fromTime">この時間移行のイベントを初期化する</param>
-            public void Reset(float fromTime = -1.0f)
+            public void ResetEvent(float fromTime = -1.0f)
             {
                 foreach(var e in _audioEventList){
                     e.Update(fromTime);
@@ -92,18 +92,11 @@ namespace Ashe
                 foreach(var e in _audioEventList){
                     e.Loop();
                 }
+                foreach(var e in _effectEventList){
+                    e.Loop();
+                }
             }
         
-
-#if UNITY_EDITOR
-            // Editorでのセットアップ用にGUIDを更新する
-            public void UpdateGUIDs()
-            {
-                 foreach(var e in _effectEventList){
-                    e.UpdateGUID();
-                }               
-            }
-#endif
             /// <summary>
             /// SE再生イベント
             /// </summary>
@@ -127,33 +120,24 @@ namespace Ashe
             {
                 // 再生対象のエフェクト
                 [SerializeField]
-                ParticleSystem _ps;
+                EffectObject _effect;
                 
-                [HideInInspector]
-                [SerializeField]
-                uint guid;
-
-#if UNITY_EDITOR
-                // Editorでのセットアップ用にGUIDを更新する
-                public void UpdateGUID()
-                {
-                    if(_ps != null) {
-                        string s = AssetDatabase.GetAssetPath(_ps);
-                        guid = (uint)AssetDatabase.AssetPathToGUID(s).GetHashCode();          
-                    }
-                }
-#endif
-
                 // EffectManagerに登録する
                 protected override void OnInitialize()
                 {
-                    EffectManager.I.poolObject(guid, _ps, 1);
+                    EffectManager.I.poolObject(_effect.effectId, _effect, 1);
                 }
 
                 // Effectの再生処理を行う
                 protected override void OnPlay()
                 {
-                    EffectManager.I.poolObject(guid, _ps, 1);
+                    var ef = EffectManager.I.Get(_effect.effectId);                    
+                    if(ef != null) {
+                        if(hasParent) ef.cachedTransform.parent = _parent;
+                        ef.gameObject.SetActive(true);
+                        ef.cachedTransform.SetLocalPositionAndRotation(_offset, Quaternion.Euler(_rotation));
+                        ef.Play();
+                    }
                 }
             }
 
@@ -186,10 +170,10 @@ namespace Ashe
                     }
                 }
 
-                // AnimationがLoopしたのでSEを再生していないことにする
+                // AnimationがLoopしたので再生していないことにする
                 public void Loop()
                 {
-                isPlayed = false;
+                    isPlayed = false;
                 }
 
                 // 時間を与えて更新する
@@ -203,7 +187,7 @@ namespace Ashe
 
                 public void Initialize(Transform root)
                 {
-                    if(!string.IsNullOrEmpty(_parentTransformName)){
+                    if(!string.IsNullOrEmpty(_parentTransformName)){                    
                         _parent = root.Find(_parentTransformName);
                     }
                     OnInitialize();
