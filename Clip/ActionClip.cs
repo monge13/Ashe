@@ -147,6 +147,7 @@ namespace Ashe
             [Serializable]
             public class KeyEvent
             {
+                // Transformのパスを取得するのは"Edit/CopyTransformName"を使ってください
                 // 再生する再の親オブジェクト
                 [SerializeField]
                 string _parentTransformName;
