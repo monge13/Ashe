@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Specialized;
+using UnityEngine;
 
 namespace Ashe
 {
@@ -9,6 +10,15 @@ namespace Ashe
         // カメラコンポーネント 
         protected Camera cachedCamera;
         protected Transform _cachedTransform;
+
+        // カメラの向いている方向ベクトル
+        public Vector3 forward {
+            get { return _cachedTransform.forward; }
+        }
+        // カメラの右方向ベクトル
+        public Vector3 right {
+            get { return _cachedTransform.right; }
+        }
 
         // カメラ座標
         Vector3 _position;
@@ -51,16 +61,9 @@ namespace Ashe
         // 角度と座標の更新を行う 
         protected void UpdateTransform()
         {
-            if (isDirtyPosition)
-            {
-                _cachedTransform.position = _position;
-                isDirtyPosition = false;
-            }
-            if (isDirtyLocalRotation)
-            {
-                _cachedTransform.localRotation = _localRoation;
-                isDirtyLocalRotation = false;
-            }
+            if(isDirtyPosition || isDirtyLocalRotation) _cachedTransform.SetLocalPositionAndRotation(_position, _localRoation);
+            isDirtyPosition = false;
+            isDirtyLocalRotation = false;
         }
     }
 }
