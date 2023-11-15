@@ -41,7 +41,7 @@ namespace Ashe
             _angle.y += degree;
         }
         // 任意軸回転を加える 
-        public void AddRotation(ref Vector3 addAngle)
+        public void AddRotation(Vector3 addAngle)
         {
             _angle.x += addAngle.x;
             _angle.y += addAngle.y;
@@ -87,8 +87,6 @@ namespace Ashe
             transform.position = position;
             transform.localRotation = localRotation;
         }
-
-
 #endif
 }
 }
