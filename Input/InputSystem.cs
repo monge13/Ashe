@@ -145,6 +145,30 @@ namespace Ashe
         }
 
         /// <summary>
+        /// マウスへの入力イベントの追加 
+        /// </summary>
+        /// <param name="_event"></param>
+        public void AddEvent(KeyboardInput.MouseEvent _event)
+        {
+            if (keyboard != null)
+            {
+                keyboard.AddEvent(_event);
+            }
+        }
+
+        /// <summary>
+        /// マウスへの入力イベントの削除 
+        /// </summary>
+        /// <param name="_event"></param>
+        public void RemoveEvent(KeyboardInput.MouseEvent _event)
+        {
+            if (keyboard != null)
+            {
+                keyboard.RemoveEvent(_event);
+            }
+        }        
+
+        /// <summary>
         /// タッチへの入力イベントの追加
         /// </summary>
         /// <param name="_event"></param>

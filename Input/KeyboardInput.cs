@@ -11,16 +11,24 @@ namespace Ashe
     public class KeyboardInput
     {
         /// <summary>
-        /// マウス入力の際の座標を保持する
+        /// ボタンが押されたときのマウス入力の際の座標を保持する
         /// </summary>
-        public class MouseInfo
+        public struct MouseInfo
         {
             public Vector2 startPosition;
             public Vector2 currentPosition;
             public Vector2 deltaPosition;
         }
         const int MOUSE_BUTTON_NUM = 5;
+        /// <summary>
+        /// マウスのボタンごとの情報（押されながら移動値などを取れる）
+        /// </summary>
         MouseInfo[] mouseInfo = new MouseInfo[MOUSE_BUTTON_NUM];
+        
+        /// <summary>
+        /// 最初の一回で入力だけマウス入力をスキップするためのフラグ
+        /// </summary>
+        bool firstInput = false;
 
         /// <summary>
         /// キー入力のイベント 
@@ -55,6 +63,22 @@ namespace Ashe
             public Action<MouseInfo> onUp;
         }
 
+        /// <summary>
+        /// マウス情報が返ってくる
+        /// マウスの現在位置, DeltaPosition
+        /// </summary>
+        public class MouseEvent
+        {
+            public MouseEvent(Action<Vector2, Vector2> mouseMoveEvent)
+            {
+                onMouseMove = mouseMoveEvent;
+            }
+            public Action<Vector2, Vector2> onMouseMove;
+        }
+        // 前回取得できたマウス座標
+        Vector2 oldMousePosition;
+
+
         public KeyboardInput()
         {
             for (int i = 0; i < mouseInfo.Length; ++i)
@@ -76,6 +100,22 @@ namespace Ashe
             _eventList.Remove(_event);
         }
 
+        /// <summary>
+        /// マウス入力のみをとるコマンド
+        /// </summary>
+        List<MouseEvent> _mouseEventList = new List<MouseEvent>();
+        public void AddEvent(MouseEvent _event)
+        {
+            _mouseEventList.Add(_event);
+        }
+        public void RemoveEvent(MouseEvent _event)
+        {
+            _mouseEventList.Remove(_event);
+        }
+
+        /// <summary>
+        /// マウスボタンがおされたかどうか
+        /// </summary>
         private bool IsMouseButton(KeyCode key)
         {
             return key == KeyCode.Mouse0 ||
@@ -86,6 +126,11 @@ namespace Ashe
         public void Update(float deltaTime, EventSystem eventSystem)
         {
             Vector2 newMousePosition = Input.mousePosition;
+            if(!firstInput) {
+                oldMousePosition = newMousePosition;
+                firstInput = true;
+            }
+
             for(int i = 0; i < mouseInfo.Length; ++i)
             {
                 KeyCode key = KeyCode.Mouse0 + i;
@@ -151,12 +196,15 @@ namespace Ashe
                             mi = mouseInfo[_event.keycode - KeyCode.Mouse0];
                         }
                         _event.onUp(mi);
-
                     }
                 }
             }
-
+            // Mouse情報を取るイベント
+            foreach(var e in _mouseEventList)
+            {
+                e.onMouseMove(newMousePosition, newMousePosition - oldMousePosition);
+            }
+            oldMousePosition = newMousePosition;
         }
-
     }
 }
