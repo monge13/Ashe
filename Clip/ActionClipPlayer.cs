@@ -50,7 +50,7 @@ namespace Ashe
                 _graph = PlayableGraph.Create();
                 // TODO: 将来的にはMANUALにしてDeltaTimeを渡すようにする。ポーズ対応
                 _graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
-                _animationMixer = AnimationMixerPlayable.Create (_graph, 2, true);
+                _animationMixer = AnimationMixerPlayable.Create (_graph, 2);
                 var playableOutput = AnimationPlayableOutput.Create(_graph, "Animation", _animationTarget); 
                 playableOutput.SetSourcePlayable(_animationMixer); 
             }
