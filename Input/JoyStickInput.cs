@@ -147,7 +147,7 @@ namespace Ashe
         private float threshold = 0.1f;
 		private readonly string analogLStickKey_X = "Horizontal";
 		private readonly string analogLStickKey_Y = "Vertical";
-        private readonly string LT_RT_Key = "LT_RT";
+        //private readonly string LT_RT_Key = "LT_RT";
 
 
         /// <summary>
