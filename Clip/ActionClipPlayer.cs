@@ -43,7 +43,7 @@ namespace Ashe
             // Blendが必要かどうか
             bool needBlend { get { return _blendTime >= Const.Float.EPSILON; } } 
 
-            void Start()
+            void Awake()
             {
                 _targetTransform = _animationTarget.transform;
                 // Animation関連の初期化
