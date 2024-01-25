@@ -9,7 +9,7 @@ using Ashe.Effect;
 
 namespace Ashe
 {
-    namespace Clip
+    namespace GameAction
     {
         /// <summary>
         /// Animaton, Audio, Effectなどを格納して一つのアクションとして再生するためのデータ
@@ -35,6 +35,11 @@ namespace Ashe
             List<EffectEvent> _effectEventList;
             public List<EffectEvent> effectEventList {  get { return _effectEventList;} }
             
+            // オブジェクトを発生させるイベント
+            [SerializeField]
+            List<SpawnEvent> _spawnEventList;
+            public List<SpawnEvent> spawnEventList { get { return _spawnEventList; } }
+
 
             // 初期化処理
             public void Initialize(PlayableGraph graph, Transform root)
@@ -48,6 +53,11 @@ namespace Ashe
                 }
 
                 foreach(var e in effectEventList)
+                {
+                    e.Initialize(root);
+                }
+
+                foreach(var e in spawnEventList)
                 {
                     e.Initialize(root);
                 }
@@ -69,6 +79,9 @@ namespace Ashe
                     e.Update(currentTime);
                 }
                 foreach(var e in _effectEventList){
+                    e.Update(currentTime);
+                }
+                foreach(var e in _spawnEventList){
                     e.Update(currentTime);
                 }
             }
@@ -95,13 +108,16 @@ namespace Ashe
                 foreach(var e in _effectEventList){
                     e.Loop();
                 }
+                foreach(var e in _spawnEventList){
+                    e.Loop();
+                }                
             }
         
             /// <summary>
             /// SE再生イベント
             /// </summary>
             [Serializable]
-            public class AudioEvent : KeyEvent
+            public class AudioEvent : PositionalEvent
             {
                 // 再生対象のSE
                 [SerializeField]
@@ -116,15 +132,16 @@ namespace Ashe
             }
 
             [Serializable]
-            public class EffectEvent : KeyEvent
+            public class EffectEvent : PositionalEvent
             {
                 // 再生対象のエフェクト
                 [SerializeField]
                 EffectObject _effect;
                 
                 // EffectManagerに登録する
-                protected override void OnInitialize()
+                protected override void OnInitialize(Transform root)
                 {
+                    base.OnInitialize(root);
                     EffectManager.I.poolObject(_effect.effectId, _effect, 1);
                 }
 
@@ -142,10 +159,67 @@ namespace Ashe
             }
 
             /// <summary>
-            /// 再生タイミングのKeyとなる時間を持ったEvent
+            /// オブジェクトをインスタンスする
             /// </summary>
             [Serializable]
-            public class KeyEvent
+            public class SpawnEvent : PositionalEvent
+            {
+                // 生成位置のTransform
+                [SerializeField]
+                string _startTransformName;
+                Transform _startTransform;
+                public bool hasStartTransform {
+                    get {
+                        return !string.IsNullOrEmpty(_startTransformName);
+                    }
+                }
+                // 生成するオブジェクト名（キャッシュされている場合はKeyとなる）
+                [SerializeField]
+                string _spawnObjectName;
+                // キャッシュされていない場合はこちらをInstanciateする
+                [SerializeField]
+                SpawnableObject _prefab;
+
+                // キャッシュから引き出すときのKey
+                uint _key;
+
+                // キャッシュする
+                protected override void OnInitialize(Transform root)
+                {
+                    base.OnInitialize(root);
+                    if(hasStartTransform){
+                        _startTransform = root.Find(_startTransformName);
+                    }
+                    _key = (uint)_spawnObjectName.GetHashCode();
+                    int cacheNum = _prefab.cacheNum <= 0 ? 1 : _prefab.cacheNum; 
+                    PooledObjectManager<SpawnableObject>.I.Pool(_key, _prefab, cacheNum);
+                }
+
+                // Objの再生処理を行う
+                protected override void OnPlay()
+                {
+                    var obj = PooledObjectManager<SpawnableObject>.I.Get(_key);
+                    if(obj != null) {
+                        Transform t = obj.transform;
+                        if(hasParent) t.parent = _parent;
+                        if(hasStartTransform) t.SetPositionAndRotation(_startTransform.position + _offset, _startTransform.rotation * Quaternion.Euler(_rotation));
+                        else t.SetLocalPositionAndRotation(_offset, Quaternion.Euler(_rotation));
+                        obj.gameObject.SetActive(true);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// パラメーターに変化を与えるイベントを発生させる
+            /// </summary>
+            [Serializable]
+            public class ParameterEvent
+            {
+                
+            }
+
+            // 座標情報を持つイベント
+            public class PositionalEvent : KeyEvent
             {
                 // Transformのパスを取得するのは"Edit/CopyTransformName"を使ってください
                 // 再生する再の親オブジェクト
@@ -158,11 +232,6 @@ namespace Ashe
                 [SerializeField]
                 protected Vector3 _rotation;
 
-                // 再生開始される時間
-                [SerializeField]
-                float _time;
-                // 再生されたかどうか
-                bool isPlayed;
                 // 再生する再親のTransform
                 protected Transform _parent;
                 protected bool hasParent {
@@ -170,6 +239,26 @@ namespace Ashe
                         return !string.IsNullOrEmpty(_parentTransformName) && _parent != null;
                     }
                 }
+                // 座標情報の初期化
+                protected override void OnInitialize(Transform root)
+                {
+                    if(hasParent){                    
+                        _parent = root.Find(_parentTransformName);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// 再生タイミングのKeyとなる時間を持ったEvent
+            /// </summary>
+            [Serializable]
+            public class KeyEvent
+            {
+                // 再生開始される時間
+                [SerializeField]
+                float _time;
+                // 再生されたかどうか
+                bool isPlayed;
 
                 // AnimationがLoopしたので再生していないことにする
                 public void Loop()
@@ -188,14 +277,11 @@ namespace Ashe
 
                 public void Initialize(Transform root)
                 {
-                    if(!string.IsNullOrEmpty(_parentTransformName)){                    
-                        _parent = root.Find(_parentTransformName);
-                    }
-                    OnInitialize();
+                    OnInitialize(root);
                 }
 
                 // 継承してイベントごとの初期化処理を行う
-                protected virtual void OnInitialize()
+                protected virtual void OnInitialize(Transform root)
                 {
                 }
 

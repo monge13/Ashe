@@ -7,7 +7,7 @@ using UnityEngine.Animations;
 
 namespace Ashe
 {
-    namespace Clip 
+    namespace GameAction 
     {
         /// <summary>
         /// ActionClipを再生する

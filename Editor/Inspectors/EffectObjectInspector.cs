@@ -6,7 +6,7 @@ namespace Ashe
 {
     namespace Editor
     {
-        [CustomEditor(typeof(Ashe.Clip.ActionClip))]
+        [CustomEditor(typeof(Ashe.GameAction.ActionClip))]
         public class EffectObjectInspector : UnityEditor.Editor
         {
             public override void OnInspectorGUI()
