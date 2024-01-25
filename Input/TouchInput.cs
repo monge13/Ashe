@@ -19,9 +19,9 @@ namespace Ashe
         {
             public void Init()
             {
-                startPosition = Ashe.Const.Vector2.zero;
-                currentPosition = Ashe.Const.Vector2.zero;
-                deltaPosition = Ashe.Const.Vector2.zero;
+                startPosition = Const.Vector2.zero;
+                currentPosition = Const.Vector2.zero;
+                deltaPosition = Const.Vector2.zero;
                 touchDuration = 0.0f;
                 phase = TouchPhase.Ended;
                 fingerId = -1;
@@ -92,13 +92,18 @@ namespace Ashe
         float tapThresholdTime = 0.3f;
 
         /// <summary>
+        /// この距離内で話されたらタップとみなす
+        /// </summary>
+        float tapThresholdDistance = 0.2f;
+
+        /// <summary>
         /// この時間内にタッチオンされてオフされたことがフリックの条件の一つとする
         /// </summary>
-        float flickThresholdTime = 0.3f;
+        //float flickThresholdTime = 0.1f;
         /// <summary>
         /// この距離以上原点からの入力距離があればフリックとみなす 
         /// </summary>
-        float flickThresholdDistance = 1.0f;
+        //float flickThresholdDistance = 0.2f;
 
 
 
@@ -113,6 +118,7 @@ namespace Ashe
                 ON,         // 触れた瞬間 
                 STAY,       // 触れている間 
                 OFF,        // 離した瞬間 
+                FLICK,      // フリック
             }
 
             public Event(TYPE _type, Action<TouchInfo> _onTouch)
@@ -220,12 +226,20 @@ namespace Ashe
                         float distance = touchInfo[id].GetSqrDistanceFromStart();
 
                         // TAP判定 
-                        if (touchInfo[id].touchDuration <= tapThresholdTime && distance <= flickThresholdDistance)
+                        if (touchInfo[id].touchDuration <= tapThresholdTime && distance <= tapThresholdDistance)
                         {
-                            DispatchEvent(Event.TYPE. TAP, touchInfo[id]);
+                            DispatchEvent(Event.TYPE.TAP, touchInfo[id]);
                         }
                         else
-                        {
+                        {  
+                            /* TODO: FLICK判定                
+                            if(touchInfo[id].touchDuration <= flickThresholdTime && flickThresholdDistance <= distance){
+                                DispatchEvent(Event.TYPE.FLICK, touchInfo[id]);
+                            }
+                            else{
+                                DispatchEvent(Event.TYPE.OFF, touchInfo[id]);
+                            }
+                            */
                             DispatchEvent(Event.TYPE.OFF, touchInfo[id]);
                         }
 
