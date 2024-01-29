@@ -6,11 +6,6 @@ namespace Ashe
 {
     /// <summary>
     /// 肩越し視点のカメラ
-    /// Follow
-    /// |- Rotation
-    ///    |- lookat
-    /// このようなオブジェクトを作って設定する。
-    /// Rotationオブジェクトを回転させることによって肩越し視点の追従処理が可能になる
     /// </summary>
     public class OverShoulderCamera : CameraBase
     {
@@ -50,15 +45,11 @@ namespace Ashe
             Quaternion x = Quaternion.AngleAxis(_angle.x, Const.Vector3.right);
             Quaternion y = Quaternion.AngleAxis(_angle.y, Const.Vector3.up);            
             Vector3 forward = x * y * Vector3.forward;
-            //Vector3 right =  x * y * Vector3.forward ;
-            //Vector3 forward = -Vector3.Cross(right, Vector3.up);
 
             _cachedTransform.SetPositionAndRotation(
                 _followObject.position + y * _offset - forward * _distance,
                 Quaternion.LookRotation(forward, Vector3.up)
             );
-
-            D.Log.I("forward : " + forward.ToString()); //+ " / right : " + right.ToString());
         } 
     }
 }
