@@ -9,7 +9,7 @@ namespace Ashe
         // 追従する対象のTransform
         [SerializeField]
         Transform _followObject;
- 
+        // 追従対象からのオフセット
         [SerializeField]
         Vector3 _offset;
  
