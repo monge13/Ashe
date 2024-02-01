@@ -21,21 +21,24 @@ namespace Ashe
         }
 
         // カメラ座標
-        Vector3 _position;
+        // こちらを更新することで座標変更を察知して最終更新する
+        Vector3 _localPosition;
         bool isDirtyPosition;
-        public Vector3 position
+        public Vector3 localPosition
         {
             get
             {
-                return _position;
+                return _localPosition;
             }
             set
             {
-                _position = value;
+                _localPosition = value;
                 isDirtyPosition = true;
             }
         }
 
+        // 回転値
+        // こちらを更新することで値の変更を最終的に反映する
         Quaternion _localRoation;
         bool isDirtyLocalRotation;
         public Quaternion localRotation
@@ -51,17 +54,24 @@ namespace Ashe
             }
         }
 
+        // 初期化処理
+        protected virtual void OnInitialize()
+        {
+        }
 
         void Start()
         {
             _cachedTransform = transform;
+            _localPosition = _cachedTransform.localPosition;
+            _localRoation = _cachedTransform.localRotation;
             cachedCamera = GetComponent<Camera>();
+            OnInitialize();
         }
 
         // 角度と座標の更新を行う 
         protected void UpdateTransform()
         {
-            if(isDirtyPosition || isDirtyLocalRotation) _cachedTransform.SetLocalPositionAndRotation(_position, _localRoation);
+            if(isDirtyPosition || isDirtyLocalRotation) _cachedTransform.SetLocalPositionAndRotation(_localPosition, _localRoation);
             isDirtyPosition = false;
             isDirtyLocalRotation = false;
         }

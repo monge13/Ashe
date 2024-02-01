@@ -75,7 +75,7 @@ namespace Ashe
                     current = y * x * z;
                     break;
             }
-            position = lookAt - current * Vector3.forward * _distance;
+            localPosition = lookAt - current * Vector3.forward * _distance;
             localRotation = current;
         }
 
@@ -84,7 +84,7 @@ namespace Ashe
     public void UpadateInEditorFromInspector()
         {
             UpdateLookAtAndPostion();
-            transform.position = position;
+            transform.position = localPosition;
             transform.localRotation = localRotation;
         }
 #endif
