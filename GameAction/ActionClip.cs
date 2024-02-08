@@ -14,7 +14,7 @@ namespace Ashe
         /// <summary>
         /// Animaton, Audio, Effectなどを格納して一つのアクションとして再生するためのデータ
         /// </summary>
-        [CreateAssetMenu(menuName = "Ashe/ActionClip")]
+        [CreateAssetMenu(menuName = "Ashe/Action/Clip")]
         public class ActionClip : ScriptableObject
         {
             // アクションで再生するAnimation

@@ -4,25 +4,25 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Audio;
 using UnityEngine.Animations;
+using System;
 
 namespace Ashe
 {
     namespace GameAction 
     {
         /// <summary>
-        /// ActionClipを再生する
+        /// ActionDataを再生する
         /// </summary>
-        public class ActionClipPlayer : MonoBehaviour
+        public class ActionPlayer : IDisposable
         {
             // Animationを再生するターゲット
-            [SerializeField]
             Animator _animationTarget;
 
             // 再生対象のTransform
             Transform _targetTransform;
 
-            // 再生中のClip
-            ActionClip _clip;
+            // 再生中のData
+            ActionData _actionData;
 
             // Animationのフレーム数
             float animationLength;
@@ -43,10 +43,18 @@ namespace Ashe
             // Blendが必要かどうか
             bool needBlend { get { return _blendTime >= Const.Float.EPSILON; } } 
 
-            void Awake()
+            ~ActionPlayer()
             {
-                _targetTransform = _animationTarget.transform;
+                Dispose();
+            }
+
+            // 初期化　アニメーションに必要なオブジェクトを作る
+            public void Initialize(Animator animationTarget)
+            {
+                _animationTarget = animationTarget;
+                _targetTransform = animationTarget.transform;
                 // Animation関連の初期化
+                if(_graph.IsValid()) _graph.Destroy();
                 _graph = PlayableGraph.Create();
                 // TODO: 将来的にはMANUALにしてDeltaTimeを渡すようにする。ポーズ対応
                 _graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
@@ -55,10 +63,11 @@ namespace Ashe
                 playableOutput.SetSourcePlayable(_animationMixer); 
             }
 
-            void Update()
+            // Actionの更新
+            public void Execute(float deltaTIme)
             {
                 if(!isPlaying) return;            
-                _time += Time.deltaTime;
+                _time += deltaTIme;
                 // Blend処理
                 if(needBlend) {
                     float t  = _time / _blendTime;
@@ -73,25 +82,25 @@ namespace Ashe
                 // Loopモーション用のイベント管理処理
                 if(animationLength <= _time){
                     _time -= animationLength;
-                    _clip.Loop();
+                    _actionData.clip.Loop();
                 }
                 // SE,Effectなどのイベント処理
-                _clip.Execute(_time);
+                _actionData.clip.Execute(_time);
             }
 
             // アクションを再生する
-            public void Play(ActionClip clip, float blendTime=0.0f)
+            public void Play(ActionData data, float blendTime=0.0f)
             {
                 _time = 0.0f;
-                _clip = clip;
-                _clip.Initialize(_graph, _targetTransform);
+                _actionData = data;
+                _actionData.clip.Initialize(_graph, _targetTransform);
 
-                animationLength = _clip.animationClip.length;
+                animationLength = _actionData.clip.animationClip.length;
 
                 // 現在使用中のインデックスではない方を開けて再生する
                 int nextMixerIndex = (currentUsedMixerIndex+1) % 2;
                 _graph.Disconnect(_animationMixer, nextMixerIndex);
-                _animationMixer.ConnectInput(nextMixerIndex, _clip.playable, 0);
+                _animationMixer.ConnectInput(nextMixerIndex, _actionData.clip.playable, 0);
 
                 // Blend処理
                 _blendTime = blendTime;
@@ -115,7 +124,7 @@ namespace Ashe
 
             }
 
-            void OnDestroy()
+            public void Dispose()
             {
                 if(_graph.IsValid()) {
                     _graph.Destroy();
