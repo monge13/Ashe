@@ -17,6 +17,8 @@ namespace Ashe
             Animator _target;
             // アクションの再生クラス
             ActionPlayer _actionPlayer = new ActionPlayer();
+            // 現在、付与されているステータス
+            List<uint> _statusIds = new List<uint>();
 
             // Start is called before the first frame update
             void Start()
@@ -30,13 +32,22 @@ namespace Ashe
                 _actionPlayer.Execute(Time.deltaTime);
             }
 
-            // 
+            // 再生できるかどうかをチェックして再生を行う
             public bool TryPlay(ActionData data, float blendTime=0.0f)
             {
+                if(!checkStatusForPlayingAction(data)) return false;
                 _actionPlayer.Play(data, blendTime);
                 return true;
             }
             
+            // 指定したアクションが再生できるかどうかチェックする
+            bool checkStatusForPlayingAction(ActionData data)
+            {
+                foreach(var id in _statusIds){
+                    if(data.blockStatusList.Contains(id)) return false;
+                }
+                return true;
+            }
         }
     }
 }
