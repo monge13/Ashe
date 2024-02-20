@@ -56,18 +56,17 @@ namespace Ashe
                 // Animation関連の初期化
                 if(_graph.IsValid()) _graph.Destroy();
                 _graph = PlayableGraph.Create();
-                // TODO: 将来的にはMANUALにしてDeltaTimeを渡すようにする。ポーズ対応
-                _graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
+                _graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
                 _animationMixer = AnimationMixerPlayable.Create (_graph, 2);
                 var playableOutput = AnimationPlayableOutput.Create(_graph, "Animation", _animationTarget); 
                 playableOutput.SetSourcePlayable(_animationMixer); 
             }
 
             // Actionの更新
-            public void Execute(float deltaTIme)
+            public void Execute(float deltaTime)
             {
                 if(!isPlaying) return;            
-                _time += deltaTIme;
+                _time += deltaTime;
                 // Blend処理
                 if(needBlend) {
                     float t  = _time / _blendTime;
@@ -86,6 +85,7 @@ namespace Ashe
                 }
                 // SE,Effectなどのイベント処理
                 _actionData.clip.Execute(_time);
+                _graph.Evaluate(deltaTime);
             }
 
             // アクションを再生する
