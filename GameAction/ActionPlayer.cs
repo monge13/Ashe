@@ -105,12 +105,12 @@ namespace Ashe
                 // Blend処理
                 _blendTime = blendTime;
                 if(needBlend) {
-                    _animationMixer.SetInputWeight(currentUsedMixerIndex, 0);
-                    _animationMixer.SetInputWeight(nextMixerIndex, 1);
-                }
-                else{
                     _animationMixer.SetInputWeight(currentUsedMixerIndex, 1);
                     _animationMixer.SetInputWeight(nextMixerIndex, 0);
+                }
+                else{
+                    _animationMixer.SetInputWeight(currentUsedMixerIndex, 0);
+                    _animationMixer.SetInputWeight(nextMixerIndex, 1);
                 }
 
                 currentUsedMixerIndex = nextMixerIndex;
