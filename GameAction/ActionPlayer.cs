@@ -121,6 +121,9 @@ namespace Ashe
             // アクション再生を停止する
             public void Stop()
             {
+                _graph.Stop();
+                isPlaying = false;
+            } 
 
             }
 
