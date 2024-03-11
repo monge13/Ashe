@@ -1,9 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Ashe.Collection;
-using Codice.Client.Commands;
-using GluonGui.WorkspaceWindow.Views.WorkspaceExplorer.Explorer;
-using GluonGui.WorkspaceWindow.Views.WorkspaceExplorer.Explorer.Operations;
 using UnityEngine;
 
 namespace Ashe
