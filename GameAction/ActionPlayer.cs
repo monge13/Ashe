@@ -15,6 +15,9 @@ namespace Ashe
         /// </summary>
         public class ActionPlayer : IDisposable
         {
+            // ActionPlayerを保持するコンポーネント
+            ActionComponent _owner;
+
             // Animationを再生するターゲット
             Animator _animationTarget;
 
@@ -49,7 +52,7 @@ namespace Ashe
             }
 
             // 初期化　アニメーションに必要なオブジェクトを作る
-            public void Initialize(Animator animationTarget)
+            public void Initialize(Animator animationTarget, ActionComponent owner)
             {
                 _animationTarget = animationTarget;
                 _targetTransform = animationTarget.transform;
@@ -60,6 +63,8 @@ namespace Ashe
                 _animationMixer = AnimationMixerPlayable.Create (_graph, 2);
                 var playableOutput = AnimationPlayableOutput.Create(_graph, "Animation", _animationTarget); 
                 playableOutput.SetSourcePlayable(_animationMixer); 
+
+                _owner = owner;
             }
 
             // Actionの更新
@@ -125,8 +130,7 @@ namespace Ashe
                 isPlaying = false;
             } 
 
-            }
-
+            // Graphの破棄
             public void Dispose()
             {
                 if(_graph.IsValid()) {

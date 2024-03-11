@@ -205,6 +205,7 @@ namespace Ashe
                         if(hasStartTransform) t.SetPositionAndRotation(_startTransform.position + _offset, _startTransform.rotation * Quaternion.Euler(_rotation));
                         else t.SetLocalPositionAndRotation(_offset, Quaternion.Euler(_rotation));
                         obj.gameObject.SetActive(true);
+                        obj.key = _key;
                     }
                 }
             }
@@ -215,7 +216,8 @@ namespace Ashe
             [Serializable]
             public class ParameterEvent
             {
-                
+                [SerializeField]
+                ActionStatusChanger _actionStatusChanger;
             }
 
             // 座標情報を持つイベント

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Ashe {
@@ -7,6 +8,10 @@ namespace Ashe {
         /// </summary>
         public class SpawnableObject : MonoBehaviour
         {
+            // Poolに返却する際のKey
+            // 外部から与える必要がある
+            public uint key { set; get; }
+
             // このオブジェクトをキャッシュする数
             [SerializeField]
             int _cacheNum = 1;
