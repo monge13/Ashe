@@ -1,31 +1,37 @@
 using UnityEditor;
 using UnityEngine;
 
-/// <summary>
-/// ヒエラルキービューに右クリックメニューを追加
-/// </summary>
-public class HierarchyMenu {
-
-    [MenuItem("Edit/CopyTransformName", false, 0)]
-    public static void CopyTransformName()
+namespace Ashe
+{
+    namespace Editor
     {
-        var gameObject = Selection.activeGameObject;
-        GUIUtility.systemCopyBuffer = GetPath(gameObject.transform);
-    }
+        /// <summary>
+        /// ヒエラルキービューに右クリックメニューを追加
+        /// </summary>
+        public class HierarchyMenu {
 
-    public static string GetPath(Transform self)
-    {
-        string path = self.gameObject.name;
-        var root = PrefabUtility.GetOutermostPrefabInstanceRoot(self);
+            [MenuItem("Edit/CopyTransformName", false, 0)]
+            public static void CopyTransformName()
+            {
+                var gameObject = Selection.activeGameObject;
+                GUIUtility.systemCopyBuffer = GetPath(gameObject.transform);
+            }
 
-        Transform parent = self.parent;
+            public static string GetPath(Transform self)
+            {
+                string path = self.gameObject.name;
+                var root = PrefabUtility.GetOutermostPrefabInstanceRoot(self);
 
-        while (parent != null)
-        {
-            path = parent.name + "/" + path;            
-            parent = parent.parent;            
-            if(parent.gameObject == root.gameObject) break; 
-        }    
-        return path;
+                Transform parent = self.parent;
+
+                while (parent != null)
+                {
+                    path = parent.name + "/" + path;            
+                    parent = parent.parent;            
+                    if(parent.gameObject == root.gameObject) break; 
+                }    
+                return path;
+            }
+        }
     }
 }
