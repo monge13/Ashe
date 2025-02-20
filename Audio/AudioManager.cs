@@ -89,7 +89,7 @@ namespace Ashe
             {
                 AudioClip clip = getOrLoadClip(name);
                 if(clip == null) return null;
-                return PlaySE(clip, loop);
+                return PlaySE(clip, loop, autoreturn);
             }
 
             /// <summary>
