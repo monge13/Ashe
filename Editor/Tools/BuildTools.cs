@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityEditor.Build.Pipeline.Interfaces;
-using UnityEditor.Build.Pipeline;
 using UnityEditor.Build.Reporting;
 
 public class BuildTools
