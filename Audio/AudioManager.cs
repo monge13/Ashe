@@ -84,8 +84,9 @@ namespace Ashe
             /// <param name="name">再生するClip名</param>
             /// <param name="loop">ループSEかどうか</param>
             /// <param name="autoreturn">自動でPoolにAudioObjectを返却するかどうか</param>
+            /// <param name="parent">3Dサウンドの再生のために親子関係を結ぶオブジェクト 
             /// <returns>再生中のAudioObject</returns>
-            public AudioObject PlaySE(string name, bool loop = false, bool autoreturn = true)
+            public AudioObject PlaySE(string name, bool loop = false, bool autoreturn = true, Transform parent = null)
             {
                 AudioClip clip = getOrLoadClip(name);
                 if(clip == null) return null;
@@ -98,10 +99,12 @@ namespace Ashe
             /// <param name="clip">再生するClip名</param>
             /// <param name="loop">ループSEかどうか</param>
             /// <param name="autoreturn">自動でPoolにAudioObjectを返却するかどうか</param>
+            /// <param name="parent">3Dサウンドの再生のために親子関係を結ぶオブジェクト 
             /// <returns>再生中のAudioObject</returns>
-            public AudioObject PlaySE(AudioClip clip, bool loop = false, bool autoreturn = true)
+            public AudioObject PlaySE(AudioClip clip, bool loop = false, bool autoreturn = true, Transform parent = null)
             {
                 AudioObject audioObject = objectPool.Get(pooledObjectKey);
+                if(parent != null) audioObject.transform.parent = parent;
                 audioObject.gameObject.SetActive(true);
                 if(loop) audioObject.Play(clip);
                 else audioObject.PlayOneShot(clip);
@@ -155,7 +158,6 @@ namespace Ashe
                     string path = Path.Join("Audio", name);
 
                     D.Log.I("Load Audio File : " + path);
-                    // TODO: ResourceManager
                     clip = Resources.Load<AudioClip>(path);
                     clips.Add(hash, clip);
                 }
