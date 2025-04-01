@@ -18,19 +18,19 @@ namespace Ashe
         /// </summary>
         [SerializeField]
         bool _useKeyboard = default;
-        public bool UseKeyboard { set { _useKeyboard = value; } get { return _useKeyboard; } };
+        public bool UseKeyboard { set { _useKeyboard = value; } get { return _useKeyboard; } }
         /// <summary>
         /// ジョイスティック入力を使うかどうか 
         /// </summary>
         [SerializeField]
         bool _useJoyStick = default;
-        public bool UseJoyStick { set { _useJoyStick = value; } get { return _useJoyStick; } };
+        public bool UseJoyStick { set { _useJoyStick = value; } get { return _useJoyStick; } }
         /// <summary>
         /// タッチ入力を使うかどうか 
         /// </summary>
         [SerializeField]
         bool _useTouchInput = default;
-        public bool UseTouchInput { set { _useTouchInput = value; } get { return _useTouchInput; } };
+        public bool UseTouchInput { set { _useTouchInput = value; } get { return _useTouchInput; } }
 
         /// <summary>
         /// キーボードからの入力を検知して入力情報をキャッシュする 
