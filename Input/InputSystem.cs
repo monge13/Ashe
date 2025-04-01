@@ -50,18 +50,9 @@ namespace Ashe
         /// </summary>
         override protected void Init()
         {
-            if (_useKeyboard)
-            {
-                keyboard = new KeyboardInput();
-            }
-            if (_useJoyStick)
-            {
-                joystick = new JoyStickInput();
-            }
-            if (_useTouchInput)
-            {
-                touch = new TouchInput();
-            }
+            keyboard = new KeyboardInput();
+            joystick = new JoyStickInput();
+            touch = new TouchInput();
         }
 
         /// <summary>
@@ -84,15 +75,15 @@ namespace Ashe
             }
 #endif
             float deltaTime = Time.deltaTime;
-            if (useKeyboard)
+            if (_useKeyboard)
             {
                 keyboard.Update(deltaTime, EventSystem.current);
             }
-            if (useJoyStick)
+            if (_useJoyStick)
             {
                 joystick.Update(deltaTime);
             }
-            if (useTouchInput)
+            if (_useTouchInput)
             {
                 touch.Update(deltaTime, EventSystem.current);
             }
