@@ -50,15 +50,15 @@ namespace Ashe
         /// </summary>
         override protected void Init()
         {
-            if (useKeyboard)
+            if (_useKeyboard)
             {
                 keyboard = new KeyboardInput();
             }
-            if (useJoyStick)
+            if (_useJoyStick)
             {
                 joystick = new JoyStickInput();
             }
-            if (useTouchInput)
+            if (_useTouchInput)
             {
                 touch = new TouchInput();
             }
