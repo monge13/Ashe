@@ -95,6 +95,16 @@ namespace Ashe.Pattern
         }
 
         /// <summary>
+        /// 指定した名前のStateが現在のStateかどうか
+        /// </summary>
+        /// <param name="hash">State名のGetHashCode</param>
+        /// <returns>hashで指定したStateが現在のStateかどうか</returns>
+        public bool IsCurrentState(uint hash)
+        {
+            return currentState.hash == hash;
+        }
+
+        /// <summary>
         /// 現在実行中のStateを返す
         /// </summary>
         /// <returns>現在実行中のState</returns>
