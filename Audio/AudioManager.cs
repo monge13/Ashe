@@ -13,11 +13,8 @@ namespace Ashe
         /// </summary>
         public class AudioManager : Pattern.SingletonMonoBehaviour<AudioManager>
         {
-            /// <summary>
-            /// 使用するミキサー
-            /// </summary>
             [SerializeField]
-            AudioMixer mixer;
+            List<AudioMixerSnapshot> snapshots;
 
             /// <summary>
             /// AudioObjectをPoolしておくRoot
@@ -164,6 +161,21 @@ namespace Ashe
                 return clip;
             }
 
+            /// <summary>
+            /// SnapShotを切り替える
+            /// </summary>
+            /// <param name="name">切り替えるSnapshot名</param>
+            /// <param name="fadeDuration">フェード時間</param>
+            public void ChangeSnapshot(string name, float fadeDuration = 0.5f)
+            {
+                AudioMixerSnapshot snapshot = snapshots.Find((s) => s.name == name);
+                if(snapshot == null){
+                    D.Log.E("Snapshot not found: " + name);
+                    return;
+                }
+                snapshot.TransitionTo(fadeDuration);
+            }
+
             void Update()
             {
                 int i = playingAudioObjects.Count - 1;
@@ -178,7 +190,6 @@ namespace Ashe
                     --i;
                 }
             }
-        
         }
     }
 }
